@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TocaAI | Backlog Viewer</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="ambient ambient-left"></div>
+      <div class="ambient ambient-right"></div>
+
+      <main class="page">
+        <header class="hero panel">
+          <div class="hero-copy">
+            <p class="eyebrow">TocaAI planning cockpit</p>
+            <h1>Backlog e tasks em leitura executiva</h1>
+            <p class="lede">
+              Visao local do projeto para o P.O., lendo diretamente os arquivos
+              <code>BACKLOG.md</code> e <code>TASKS.md</code>.
+            </p>
+          </div>
+
+          <div class="hero-side">
+            <button id="refresh-button" class="primary-button" type="button">
+              Atualizar agora
+            </button>
+
+            <dl class="doc-meta">
+              <div>
+                <dt>Backlog</dt>
+                <dd id="backlog-updated-at">-</dd>
+              </div>
+              <div>
+                <dt>Tasks</dt>
+                <dd id="tasks-updated-at">-</dd>
+              </div>
+              <div>
+                <dt>Sequencia atual</dt>
+                <dd id="task-sequence">-</dd>
+              </div>
+              <div>
+                <dt>Ultima leitura</dt>
+                <dd id="generated-at">-</dd>
+              </div>
+            </dl>
+          </div>
+        </header>
+
+        <section id="stats-grid" class="stats-grid" aria-label="Metricas"></section>
+
+        <section class="panel filter-panel" aria-label="Filtros">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Filtros</p>
+              <h2>Recorte rapido para decisao</h2>
+            </div>
+          </div>
+
+          <div class="filter-grid">
+            <label class="field">
+              <span>Busca</span>
+              <input
+                id="query-input"
+                type="search"
+                placeholder="BKL, TASK, titulo ou descricao"
+              />
+            </label>
+
+            <label class="field">
+              <span>Status do backlog</span>
+              <select id="backlog-status-filter"></select>
+            </label>
+
+            <label class="field">
+              <span>Prioridade</span>
+              <select id="priority-filter"></select>
+            </label>
+
+            <label class="field">
+              <span>Epic</span>
+              <select id="epic-filter"></select>
+            </label>
+
+            <label class="field">
+              <span>Status da task</span>
+              <select id="task-status-filter"></select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="backlog-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Backlog priorizado</p>
+              <h2 id="backlog-title">Itens prontos para leitura do produto</h2>
+            </div>
+            <p id="backlog-counter" class="section-meta">-</p>
+          </div>
+
+          <div id="backlog-groups" class="backlog-groups"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="tasks-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Registro de tasks</p>
+              <h2 id="tasks-title">Execucao detalhada por task</h2>
+            </div>
+            <p id="tasks-counter" class="section-meta">-</p>
+          </div>
+
+          <div class="table-wrap">
+            <table class="tasks-table">
+              <thead>
+                <tr>
+                  <th>Task</th>
+                  <th>Status</th>
+                  <th>Inicio</th>
+                  <th>Fim</th>
+                  <th>Backlog</th>
+                </tr>
+              </thead>
+              <tbody id="tasks-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="empty-state-template">
+      <div class="empty-state">
+        <p class="empty-title">Nenhum resultado encontrado</p>
+        <p class="empty-copy">
+          Ajuste os filtros para voltar a visualizar backlog e tasks.
+        </p>
+      </div>
+    </template>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#ffb2b9",
+                    "surface-container-high": "#1f1f2a",
+                    "on-primary-fixed": "#3a4a00",
+                    "on-tertiary-fixed-variant": "#4000ad",
+                    "primary-dim": "#beee00",
+                    "on-tertiary": "#25006b",
+                    "on-secondary": "#005359",
+                    "outline": "#76747f",
+                    "primary": "#f3ffca",
+                    "on-tertiary-container": "#ffffff",
+                    "on-background": "#f2effb",
+                    "secondary-container": "#006970",
+                    "on-secondary-fixed-variant": "#005e64",
+                    "primary-container": "#cafd00",
+                    "on-secondary-fixed": "#003f43",
+                    "on-primary-fixed-variant": "#526900",
+                    "surface": "#0d0d16",
+                    "error": "#ff6e84",
+                    "surface-tint": "#f3ffca",
+                    "on-error": "#490013",
+                    "inverse-surface": "#fcf8ff",
+                    "surface-container-lowest": "#000000",
+                    "on-primary": "#516700",
+                    "inverse-on-surface": "#55545e",
+                    "on-secondary-container": "#e3fdff",
+                    "tertiary-container": "#7c4dff",
+                    "surface-container": "#191923",
+                    "secondary-dim": "#00deec",
+                    "secondary-fixed-dim": "#00deec",
+                    "surface-dim": "#0d0d16",
+                    "on-tertiary-fixed": "#1c0055",
+                    "tertiary-fixed": "#b8a3ff",
+                    "inverse-primary": "#516700",
+                    "tertiary-fixed-dim": "#ab93ff",
+                    "surface-bright": "#2b2b38",
+                    "error-dim": "#d73357",
+                    "on-primary-container": "#4a5e00",
+                    "surface-container-low": "#13131c",
+                    "outline-variant": "#484751",
+                    "surface-variant": "#252531",
+                    "on-surface": "#f2effb",
+                    "surface-container-highest": "#252531",
+                    "background": "#0d0d16",
+                    "primary-fixed-dim": "#beee00",
+                    "secondary-fixed": "#00eefc",
+                    "on-surface-variant": "#acaab5",
+                    "tertiary-dim": "#7e51ff",
+                    "primary-fixed": "#cafd00",
+                    "error-container": "#a70138",
+                    "tertiary": "#a68cff",
+                    "secondary": "#00eefc"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Spline Sans"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-card {
+            background: rgba(37, 37, 49, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation Shell -->
+<nav class="flex justify-between items-center w-full px-6 py-4 fixed top-0 z-50 bg-surface-container-lowest/60 dark:bg-[#000000]/60 backdrop-blur-xl">
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-variant/40 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[#f2effb]">arrow_back</span>
+</button>
+</div>
+<span class="text-2xl font-bold tracking-tighter text-[#f3ffca] font-headline">PalcoJá</span>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-variant/40 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[#f2effb]">share</span>
+</button>
+</nav>
+<!-- Main Content Canvas -->
+<main class="pb-32">
+<!-- Hero Section -->
+<section class="relative h-[530px] w-full overflow-hidden">
+<div class="absolute inset-0">
+<img alt="Performance Image" class="w-full h-full object-cover" data-alt="Cinematic shot of a charismatic musician performing on stage with atmospheric blue and purple lighting and light smoke effects" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrt1x9MZ1YV-DOzUUTG9KuJgd7GOkSWSdo8aLxGeNdkKKBVX9agul9JOWv2lyEEBHZR_iqysSY0CCS4acK0sg1yRpUYrcZYrBbhAcbTY63lGvuzyG6oiYZf503WKqF4fVAIAaHXjR1zxps2keXJcWzAs3ZI7avUQOkhELUjUd29OPwFNObgoj4pMTMMVzR4J6eRH2Jxt3bd8CHLmiLsArY8rCjVX6rG_jCvdOwv6S42wNB0bv1FhPvEuAfVCVefpuxPDBodSKxpRxG"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 space-y-4">
+<div class="flex gap-2">
+<span class="bg-error-container text-error px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span> AO VIVO
+                    </span>
+<span class="bg-surface-variant/80 backdrop-blur-md text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                        Pop Rock / Indie
+                    </span>
+</div>
+<div>
+<h1 class="text-5xl font-extrabold font-headline tracking-tighter text-on-surface">Lucas &amp; Banda</h1>
+<div class="flex items-center gap-4 mt-2">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-lg">4.9</span>
+<span class="text-on-surface-variant text-sm">(124 avaliações)</span>
+</div>
+<div class="w-px h-4 bg-outline-variant/30"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-lg">event_available</span>
+<span class="font-bold text-lg">150+ shows</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Profile Content -->
+<div class="px-6 space-y-10 mt-8">
+<!-- Bio Section -->
+<section class="space-y-4">
+<h3 class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em]">Bio</h3>
+<p class="text-on-surface/80 leading-relaxed text-lg font-light">
+                    Com mais de 8 anos de estrada, <span class="text-primary font-medium">Lucas &amp; Banda</span> trazem uma releitura vibrante dos clássicos do Pop Rock nacional e internacional. Conhecidos pela energia contagiante e presença de palco magnética em eventos corporativos e casamentos de alto padrão.
+                </p>
+</section>
+<!-- Repertório (Horizontal Bento) -->
+<section class="space-y-4">
+<div class="flex justify-between items-end">
+<h3 class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em]">Repertório</h3>
+<span class="text-secondary text-sm font-medium">Ver lista completa</span>
+</div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+<div class="min-w-[200px] p-5 rounded-2xl bg-surface-container-high border-none space-y-3">
+<span class="material-symbols-outlined text-primary">rocket_launch</span>
+<h4 class="font-bold text-lg">Hits Atuais</h4>
+<p class="text-on-surface-variant text-sm">Coldplay, Imagine Dragons, The Weeknd e mais.</p>
+</div>
+<div class="min-w-[200px] p-5 rounded-2xl bg-surface-container-high border-none space-y-3">
+<span class="material-symbols-outlined text-secondary">history_edu</span>
+<h4 class="font-bold text-lg">Clássicos BR</h4>
+<p class="text-on-surface-variant text-sm">Skank, Jota Quest, Lulu Santos e Titãs.</p>
+</div>
+<div class="min-w-[200px] p-5 rounded-2xl bg-surface-container-high border-none space-y-3">
+<span class="material-symbols-outlined text-tertiary">nightlife</span>
+<h4 class="font-bold text-lg">80's &amp; 90's</h4>
+<p class="text-on-surface-variant text-sm">A-ha, Tears for Fears, Queen e Bon Jovi.</p>
+</div>
+</div>
+</section>
+<!-- Vídeos de Performance (Asymmetric Grid) -->
+<section class="space-y-4">
+<h3 class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em]">Vídeos de Performance</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="relative rounded-3xl overflow-hidden aspect-[4/5] col-span-1">
+<img alt="Live Video" class="w-full h-full object-cover" data-alt="Energetic guitarist performing on a dark stage with vibrant purple stage lights and crowd silhouettes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe5D1sq0teiwh_kaEtR55gt6g2bBfga-T0MPGs0aZsEfmCjBygXaaGW8ue1TRFHB-sZJVtcSyFOD7idDP_ZVhfmytwnNj7zjoWIgyd0l1MOxEldlvG1fk8GLWhhvwW35LvxOsQk2IYvPgOdLdIRDUCx1Tn8JXLnWXhQSsJYAfvU-dN9y7qTxZzj73rVqpP2dTLxvKKRbwn553WbtgwogKy4erG9w8huKtZvtO2Nfjak1jJMx9VIDHDrUGtUMqwAX6FjhJF22UatYTA"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/40 transition-colors">
+<span class="material-symbols-outlined text-6xl text-white/90" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+<div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-lg text-[10px] font-bold">LIVE NO BLUE NOTE</div>
+</div>
+<div class="grid grid-rows-2 gap-4">
+<div class="relative rounded-3xl overflow-hidden aspect-video">
+<img alt="Music Session" class="w-full h-full object-cover" data-alt="Close up of a singer with a classic microphone in a professional studio setting with warm moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKJ5dy7nzRnD1_AEsuEiunQW4iigmkNsiWY31D4uKtWBKWFizOQCE60bZn6fNfIFcXwdg4dqOWrEDTxAm5h2FP2WNth-5_ut5rZfKtTfTIM200kHpS9OGUTpArRzWYK2e25byULtm79BMpej-Y0-8LEHuDVSLvY8G3EuydDuFQJ5goFswoJ3q-xR7PgThopiMRj1CjbMjiC3TeTkfe55VWFFeTrjxfGS04Z41urS1PHtHfJCpUGGWRZKfg8qffDLMpXc4D17lIvHum"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/10">
+<span class="material-symbols-outlined text-4xl text-white/80" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+<div class="relative rounded-3xl overflow-hidden aspect-video">
+<img alt="Wedding Gig" class="w-full h-full object-cover" data-alt="Distant view of a band performing at an outdoor evening event with hanging fairy lights and dark trees" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDskCpxTnHa0FDYENWzXUJHbg1WF2PCqB5JKPU1-cJGunbulRzO-R-VD75yKhTkW16TLeTesWGhYJUHRBDt5S9jikQoCcfBTuNOgbC5owIJ1KJ98ED1xNxYoNYhxqMVT68G_zj4ok5s0WiXO436CQLICxdLZYcIi4GDhojhac3tUdATJ6fj4tSdy0xksQ7EuF9gTSl_xS29deSTKg5meGUhsqUJ8WPoq9BiNyMq7yvZ3Lg9hQ5xKmunmhTjArqb2z0YqF67X2EqLEj0"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/10">
+<span class="material-symbols-outlined text-4xl text-white/80" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Equipamentos Section -->
+<section class="space-y-4">
+<h3 class="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.2em]">Equipamentos Próprios</h3>
+<div class="bg-surface-container-low rounded-[2rem] p-6 space-y-6">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl">speaker</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Sonorização Completa</h4>
+<p class="text-on-surface-variant text-sm mt-1">Sistema PA RCF para até 300 pessoas, incluindo mesa digital e monitoramento in-ear.</p>
+</div>
+</div>
+<div class="h-px bg-outline-variant/10"></div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-2xl">lightbulb</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface">Iluminação de Palco</h4>
+<p class="text-on-surface-variant text-sm mt-1">Set de Moving Heads, Ribaltas LED e máquina de fumaça profissional.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Sticky Call to Action Bar -->
+<div class="fixed bottom-0 left-0 w-full z-50 bg-surface-container-highest/80 backdrop-blur-2xl px-6 pb-8 pt-4 border-t border-white/5 flex items-center justify-between gap-4">
+<div class="flex flex-col">
+<span class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">A partir de</span>
+<div class="flex items-baseline gap-1">
+<span class="text-on-surface font-bold text-xl font-headline">R$ 4.500</span>
+<span class="text-on-surface-variant text-xs">/show</span>
+</div>
+</div>
+<button class="flex-1 h-14 bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-bold rounded-2xl flex items-center justify-center gap-2 shadow-[0_8px_32px_rgba(243,255,202,0.2)] active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+            Contratar Agora
+        </button>
+</div>
+<!-- Background Decoration -->
+<div class="fixed top-[20%] -left-[10%] w-[50%] h-[50%] bg-tertiary/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+<div class="fixed bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-secondary/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
+</body></html>

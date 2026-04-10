@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-labelledby="title desc">
+  <title id="title">QR Code TocaAI</title>
+  <desc id="desc">QR Code ilustrativo para download do aplicativo TocaAI.</desc>
+  <rect width="220" height="220" rx="26" fill="#ffffff" />
+
+  <rect x="16" y="16" width="58" height="58" rx="8" fill="#111111" />
+  <rect x="28" y="28" width="34" height="34" rx="5" fill="#ffffff" />
+  <rect x="37" y="37" width="16" height="16" rx="3" fill="#111111" />
+
+  <rect x="146" y="16" width="58" height="58" rx="8" fill="#111111" />
+  <rect x="158" y="28" width="34" height="34" rx="5" fill="#ffffff" />
+  <rect x="167" y="37" width="16" height="16" rx="3" fill="#111111" />
+
+  <rect x="16" y="146" width="58" height="58" rx="8" fill="#111111" />
+  <rect x="28" y="158" width="34" height="34" rx="5" fill="#ffffff" />
+  <rect x="37" y="167" width="16" height="16" rx="3" fill="#111111" />
+
+  <rect x="88" y="18" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="104" y="18" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="88" y="34" width="28" height="12" rx="2" fill="#111111" />
+  <rect x="120" y="34" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="88" y="50" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="120" y="50" width="24" height="12" rx="2" fill="#111111" />
+  <rect x="88" y="66" width="40" height="12" rx="2" fill="#111111" />
+
+  <rect x="82" y="88" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="98" y="88" width="28" height="12" rx="2" fill="#111111" />
+  <rect x="130" y="88" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="146" y="88" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="178" y="88" width="12" height="12" rx="2" fill="#111111" />
+
+  <rect x="18" y="88" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="34" y="88" width="24" height="12" rx="2" fill="#111111" />
+  <rect x="18" y="104" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="50" y="104" width="24" height="12" rx="2" fill="#111111" />
+  <rect x="82" y="104" width="28" height="12" rx="2" fill="#111111" />
+  <rect x="114" y="104" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="146" y="104" width="44" height="12" rx="2" fill="#111111" />
+
+  <rect x="18" y="120" width="44" height="12" rx="2" fill="#111111" />
+  <rect x="82" y="120" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="98" y="120" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="130" y="120" width="28" height="12" rx="2" fill="#111111" />
+  <rect x="178" y="120" width="12" height="12" rx="2" fill="#111111" />
+
+  <rect x="88" y="136" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="104" y="136" width="28" height="12" rx="2" fill="#111111" />
+  <rect x="146" y="136" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="178" y="136" width="12" height="12" rx="2" fill="#111111" />
+
+  <rect x="88" y="152" width="24" height="12" rx="2" fill="#111111" />
+  <rect x="130" y="152" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="146" y="152" width="28" height="12" rx="2" fill="#111111" />
+  <rect x="178" y="152" width="12" height="12" rx="2" fill="#111111" />
+
+  <rect x="82" y="168" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="98" y="168" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="114" y="168" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="146" y="168" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="162" y="168" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="178" y="168" width="12" height="12" rx="2" fill="#111111" />
+
+  <rect x="88" y="184" width="12" height="12" rx="2" fill="#111111" />
+  <rect x="120" y="184" width="40" height="12" rx="2" fill="#111111" />
+  <rect x="178" y="184" width="12" height="12" rx="2" fill="#111111" />
+
+  <defs>
+    <radialGradient id="accent" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#63deff" />
+      <stop offset="56%" stop-color="#ff4bc1" />
+      <stop offset="100%" stop-color="#ff8125" />
+    </radialGradient>
+  </defs>
+
+  <rect x="114" y="50" width="12" height="12" rx="2" fill="url(#accent)" />
+  <rect x="162" y="104" width="12" height="12" rx="2" fill="url(#accent)" />
+  <rect x="114" y="152" width="12" height="12" rx="2" fill="url(#accent)" />
+  <rect x="50" y="120" width="12" height="12" rx="2" fill="url(#accent)" />
+</svg>

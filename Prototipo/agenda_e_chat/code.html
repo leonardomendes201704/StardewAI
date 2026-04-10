@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffb2b9",
+                        "surface-container-high": "#1f1f2a",
+                        "on-primary-fixed": "#3a4a00",
+                        "on-tertiary-fixed-variant": "#4000ad",
+                        "primary-dim": "#beee00",
+                        "on-tertiary": "#25006b",
+                        "on-secondary": "#005359",
+                        "outline": "#76747f",
+                        "primary": "#f3ffca",
+                        "on-tertiary-container": "#ffffff",
+                        "on-background": "#f2effb",
+                        "secondary-container": "#006970",
+                        "on-secondary-fixed-variant": "#005e64",
+                        "primary-container": "#cafd00",
+                        "on-secondary-fixed": "#003f43",
+                        "on-primary-fixed-variant": "#526900",
+                        "surface": "#0d0d16",
+                        "error": "#ff6e84",
+                        "surface-tint": "#f3ffca",
+                        "on-error": "#490013",
+                        "inverse-surface": "#fcf8ff",
+                        "surface-container-lowest": "#000000",
+                        "on-primary": "#516700",
+                        "inverse-on-surface": "#55545e",
+                        "on-secondary-container": "#e3fdff",
+                        "tertiary-container": "#7c4dff",
+                        "surface-container": "#191923",
+                        "secondary-dim": "#00deec",
+                        "secondary-fixed-dim": "#00deec",
+                        "surface-dim": "#0d0d16",
+                        "on-tertiary-fixed": "#1c0055",
+                        "tertiary-fixed": "#b8a3ff",
+                        "inverse-primary": "#516700",
+                        "tertiary-fixed-dim": "#ab93ff",
+                        "surface-bright": "#2b2b38",
+                        "error-dim": "#d73357",
+                        "on-primary-container": "#4a5e00",
+                        "surface-container-low": "#13131c",
+                        "outline-variant": "#484751",
+                        "surface-variant": "#252531",
+                        "on-surface": "#f2effb",
+                        "surface-container-highest": "#252531",
+                        "background": "#0d0d16",
+                        "primary-fixed-dim": "#beee00",
+                        "secondary-fixed": "#00eefc",
+                        "on-surface-variant": "#acaab5",
+                        "tertiary-dim": "#7e51ff",
+                        "primary-fixed": "#cafd00",
+                        "error-container": "#a70138",
+                        "tertiary": "#a68cff",
+                        "secondary": "#00eefc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Spline Sans"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-panel {
+            background: rgba(37, 37, 49, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-black">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center w-full px-6 py-4 fixed top-0 z-50 bg-surface-container-lowest/60 dark:bg-[#000000]/60 backdrop-blur-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#f3ffca]" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<h1 class="text-2xl font-bold tracking-tighter text-[#f3ffca] font-headline">PalcoJá</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[#f3ffca]">notifications</span>
+</button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-5xl mx-auto">
+<!-- Content Header -->
+<div class="mb-8">
+<h2 class="text-4xl font-extrabold font-headline tracking-tight text-on-surface mb-2">Sua Noite</h2>
+<p class="text-on-surface-variant font-medium">Gerencie suas datas e conexões em um só lugar.</p>
+</div>
+<!-- Section Switcher (Bento Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
+<!-- Calendar/Agenda Section (8 Columns) -->
+<section class="md:col-span-7 flex flex-col gap-6">
+<div class="bg-surface-container-low rounded-[2rem] p-6 relative overflow-hidden">
+<div class="flex items-center justify-between mb-8">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">Agenda Ativa</span>
+<h3 class="text-2xl font-bold font-headline">Outubro 2023</h3>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Calendar Grid -->
+<div class="grid grid-cols-7 gap-y-6 text-center">
+<!-- Days Header -->
+<div class="text-[10px] font-bold text-outline uppercase">Dom</div>
+<div class="text-[10px] font-bold text-outline uppercase">Seg</div>
+<div class="text-[10px] font-bold text-outline uppercase">Ter</div>
+<div class="text-[10px] font-bold text-outline uppercase">Qua</div>
+<div class="text-[10px] font-bold text-outline uppercase">Qui</div>
+<div class="text-[10px] font-bold text-outline uppercase">Sex</div>
+<div class="text-[10px] font-bold text-outline uppercase">Sáb</div>
+<!-- Days Example -->
+<div class="p-2 text-outline/40">28</div>
+<div class="p-2 text-outline/40">29</div>
+<div class="p-2 text-outline/40">30</div>
+<div class="p-2 relative flex flex-col items-center justify-center">
+<span class="z-10 font-bold">01</span>
+</div>
+<div class="p-2 relative flex flex-col items-center justify-center">
+<span class="z-10 font-bold">02</span>
+</div>
+<div class="p-2 relative flex flex-col items-center justify-center">
+<div class="absolute inset-1 bg-primary/10 rounded-xl border border-primary/20"></div>
+<span class="z-10 font-bold text-primary">03</span>
+<div class="w-1 h-1 bg-primary rounded-full absolute bottom-2"></div>
+</div>
+<div class="p-2 font-bold">04</div>
+<!-- Row 2 -->
+<div class="p-2 font-bold">05</div>
+<div class="p-2 font-bold">06</div>
+<div class="p-2 font-bold">07</div>
+<div class="p-2 font-bold">08</div>
+<div class="p-2 font-bold">09</div>
+<div class="p-2 relative flex flex-col items-center justify-center">
+<div class="absolute inset-1 bg-secondary/10 rounded-xl border border-secondary/20"></div>
+<span class="z-10 font-bold text-secondary">10</span>
+<div class="w-1 h-1 bg-secondary rounded-full absolute bottom-2"></div>
+</div>
+<div class="p-2 font-bold">11</div>
+</div>
+</div>
+<!-- Upcoming Gigs List -->
+<div class="flex flex-col gap-4">
+<h4 class="text-sm font-bold uppercase tracking-widest text-outline-variant px-2">Próximos Gigs</h4>
+<!-- Gig Card 1 -->
+<div class="group relative bg-surface-container-high rounded-3xl p-5 flex gap-5 items-center transition-all hover:bg-surface-variant">
+<div class="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0">
+<img alt="Blue Note Bar" class="w-full h-full object-cover" data-alt="Modern jazz bar interior with warm neon lighting and stage ready for performance" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7AXozghNa-PthNMfEYk8Q0qB1WJRvw7O5AzQ1kQZy3xBU3i4_7Fs6F01oRHKH-zkBIViOdie4nz9ELoLr2spprp2OZG9Ethxs0AtSNgftqxrBs8EuRE_rBcoosWjaqV8gHQNb-jWW9gvx-FmUlrsj5yo787XbCRedwSNHNXW6SgJcFJTfZUOe2SRwdcmwYiGHlx6HaGRSj0rgeVd6NvFKoK4lw3-eaDQtmTSQ_m62Ny7Bkd-dg8G12a5vR5GR8c-_WMlcg384vrmM"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">CONFIRMADO</span>
+<span class="text-on-surface-variant text-[10px] font-medium">10 Out • 21:00</span>
+</div>
+<h5 class="text-lg font-bold">Blue Note Jazz Club</h5>
+<p class="text-sm text-outline-variant">Show Solo - Jazz &amp; Blues</p>
+</div>
+<button class="bg-surface-container-highest p-3 rounded-2xl text-primary transition-transform group-active:scale-90">
+<span class="material-symbols-outlined">qr_code</span>
+</button>
+</div>
+<!-- Gig Card 2 -->
+<div class="group relative bg-surface-container-high rounded-3xl p-5 flex gap-5 items-center transition-all hover:bg-surface-variant">
+<div class="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0">
+<img alt="Cave Pub" class="w-full h-full object-cover" data-alt="Cozy underground bar with exposed brick walls and soft candle lighting on tables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA85maGfYbyG8qUNBvrwlvNxsuoZJtf9bIrLMj1QpYZjxRu9-KsjvwlLpPq1kia3nR5AzX1blLTeMUWfCAL43qPcBTxoIbm-ZlAZPmCKvDTpvz-RdtTxYYSi4lbpK2_DfZJ7L8GAelZSVhKeL2XRBEzv65hLlaxHRy0iTPLEroq560Ty7UZyXeK4JbsP6ougeIT0ZHL8OdaVRkD60XavdO-dGBd8123hQupm76KmeIQyuQ_9kuQjhGuUWjPxyaNCU6UXdCCuBmwDtjs"/>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-secondary/20 text-secondary text-[10px] font-bold px-2 py-0.5 rounded-full">AGUARDANDO SINAL</span>
+<span class="text-on-surface-variant text-[10px] font-medium">15 Out • 20:30</span>
+</div>
+<h5 class="text-lg font-bold">The Cave Pub</h5>
+<p class="text-sm text-outline-variant">Banda Trio - Indie Rock</p>
+</div>
+<button class="bg-surface-container-highest p-3 rounded-2xl text-secondary transition-transform group-active:scale-90">
+<span class="material-symbols-outlined">payments</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Chat Section (4 Columns) -->
+<section class="md:col-span-5 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h4 class="text-sm font-bold uppercase tracking-widest text-outline-variant">Mensagens</h4>
+<span class="bg-error-container text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">4 NOVAS</span>
+</div>
+<div class="bg-surface-container-lowest rounded-[2rem] overflow-hidden border border-outline-variant/10">
+<!-- Search Input -->
+<div class="p-4 bg-surface-container-low/50">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant text-lg">search</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-2xl py-3 pl-12 pr-4 text-sm focus:ring-1 focus:ring-secondary text-on-surface placeholder:text-outline-variant" placeholder="Buscar conversas..." type="text"/>
+</div>
+</div>
+<!-- Chat List -->
+<div class="flex flex-col divide-y divide-outline-variant/5 overflow-y-auto max-h-[600px] hide-scrollbar">
+<!-- Chat Item 1 -->
+<div class="p-4 flex gap-4 hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="relative flex-shrink-0">
+<img alt="Ana Clara - Manager" class="w-12 h-12 rounded-full object-cover" data-alt="Portrait of a bar manager with a professional smile in a dark sophisticated environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7H6eg95yR3AnGQ49TDtL7-cFIUgY7bGmobPiysCee13bhrwFsOdw8bzT98UavVg9tFSUSxNnQ4fZTIaz99XmShZN7HAll5jZt2mF5DS-FNTUIbDMUi2tC-VuWPUCBfC5iKpaoK-986fcVCls2ORHXUV4AfdD-WO0GfjcZx5-afo-ZVKXqmAFtBC11yncF5euFgR-eMWtI8NOSWx2nuUYo4xodRb4WiDcTgpNnIEXFs80sw4OkpxpkmKYK4CpJkbIbeK8aFzrpCn2k"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-secondary border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h6 class="font-bold text-on-surface truncate">Ana Clara (Blue Note)</h6>
+<span class="text-[10px] text-outline-variant">14:20</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate font-medium">Contratação Confirmada! O rider técnico já foi enviado para...</p>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="text-[10px] font-bold text-primary uppercase tracking-tighter">Contratação Confirmada</span>
+</div>
+</div>
+</div>
+<!-- Chat Item 2 -->
+<div class="p-4 flex gap-4 hover:bg-surface-variant transition-colors cursor-pointer group bg-surface-variant/20">
+<div class="relative flex-shrink-0">
+<img alt="Ricardo - Owner" class="w-12 h-12 rounded-full object-cover" data-alt="Close up portrait of a male club owner in high-contrast urban lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2DRuBnX-hoFwfbmHopXbH8kB8Z8o8Q9pzX1NRRzm9vH8ifQZuuREYaFKc3SFXOpSd4tP7gaItVO4zCImwMo_aCmRnn1ENl6wfMdbQPfBe8IPRiAft4bfjwTWeH2Px6l4VevfksnsaQ-R2j3_I0SeQud7fVk-jdHQeag2ljItMUypymSgjiHqm_nW6OAxF_t4amBvB-5uZvFFoiH3e0qMk39z3VC_Os3BPj3vN1LdxnT0-aQSr3OhSsSRGj1mZ2VE2phwPljFhwyEY"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-outline-variant border-2 border-surface-container-lowest rounded-full"></div>
+</div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h6 class="font-bold text-on-surface truncate">Ricardo (The Cave)</h6>
+<span class="text-[10px] text-secondary font-bold">12:05</span>
+</div>
+<p class="text-xs text-secondary truncate font-bold">Aguardamos o comprovante do sinal para liberar o anúncio.</p>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Aguardando Sinal</span>
+</div>
+</div>
+</div>
+<!-- Chat Item 3 -->
+<div class="p-4 flex gap-4 hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="relative flex-shrink-0">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant">corporate_fare</span>
+</div>
+</div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h6 class="font-bold text-on-surface truncate">Festival Aurora 2024</h6>
+<span class="text-[10px] text-outline-variant">Ontem</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate font-medium">Sua proposta foi visualizada pela curadoria.</p>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-bold text-outline-variant uppercase tracking-tighter">Em Negociação</span>
+</div>
+</div>
+</div>
+<!-- Chat Item 4 -->
+<div class="p-4 flex gap-4 hover:bg-surface-variant transition-colors cursor-pointer group">
+<div class="relative flex-shrink-0">
+<img alt="Marina - PR" class="w-12 h-12 rounded-full object-cover" data-alt="Smiling female event planner in a studio with soft colorful lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ3dPksFJrl763ag2EEhwp1t9FIrgjIZFjYHz8bdiZgTa_kLNcyqq338jy8Nd6TvN0PsZXs9iLG5Z1Hv1jZzX2Gh8epNBCms0olreZWmIEl1DlV5n1JYR6eZnT-WpEu5dDL0w9LRjTBcCYR3ck8zzii8rDgY8xFIvglLauIGWMxG-NEQi_wlclh-KKgPQIPONTvNewcoLQuEtWnIzvjqNbMPEsyLeHIn7CTlAemguU7O5sb6GehHqbuA0eyDGaEQdWnHnMjcoSdtC3"/>
+</div>
+<div class="flex-grow min-w-0">
+<div class="flex justify-between items-start mb-0.5">
+<h6 class="font-bold text-on-surface truncate">Marina PR</h6>
+<span class="text-[10px] text-outline-variant">02 Out</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate font-medium">As artes para o Instagram já estão prontas...</p>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="text-[10px] font-bold text-outline-variant uppercase tracking-tighter">Finalizado</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Call to Action Floating Bar -->
+<div class="glass-panel fixed bottom-28 left-6 right-6 md:left-auto md:right-12 md:w-80 p-5 rounded-[2rem] border border-outline-variant/20 shadow-2xl z-40 transform translate-y-0 animate-in slide-in-from-bottom-4">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-2xl bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-black">add</span>
+</div>
+<div>
+<p class="text-xs font-bold text-primary uppercase">Nova Oportunidade</p>
+<p class="text-sm font-medium">Bar do Porto quer você.</p>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary-fixed rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-transform active:scale-95">
+                    Responder Agora
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-surface-variant/60 dark:bg-[#252531]/60 backdrop-blur-xl rounded-t-[24px] shadow-[0_-4px_24px_rgba(243,202,202,0.08)]">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors tap-highlight-none active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider">Home</span>
+</a>
+<!-- Search -->
+<a class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors tap-highlight-none active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider">Search</span>
+</a>
+<!-- Calendar (Active for Agenda) -->
+<a class="flex flex-col items-center justify-center bg-[#f3ffca] text-black rounded-[1.5rem] px-4 py-1.5 transition-colors tap-highlight-none active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider">Calendar</span>
+</a>
+<!-- Chat -->
+<a class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors tap-highlight-none active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider">Chat</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors tap-highlight-none active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

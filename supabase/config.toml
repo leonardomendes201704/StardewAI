@@ -1,0 +1,16 @@
+project_id = "fbbhnvjvfukmrbsmeici"
+
+[functions.stripe-create-platform-checkout]
+verify_jwt = false
+
+[functions.stripe-create-musician-connect-onboarding]
+verify_jwt = false
+
+[functions.stripe-platform-webhook]
+verify_jwt = false
+
+[functions.stripe-release-musician-payout]
+verify_jwt = false
+
+[functions.stripe-sync-musician-connect-account]
+verify_jwt = false

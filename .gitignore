@@ -1,0 +1,39 @@
+# Dependencies
+**/node_modules/
+
+# Local environments
+**/.env.local
+**/.env.*.local
+
+# Expo / React Native
+**/.expo/
+**/dist/
+**/web-build/
+**/.metro-health-check*
+
+# Android / native build outputs
+**/.gradle/
+**/.kotlin/
+**/build/
+**/.cxx/
+**/local.properties
+*.apk
+*.aab
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+**/.idea/
+**/.vscode/
+*.iml
+
+# Logs / temp / debug artifacts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+tmp-*.png
+tmp-*.xml
+
+# Supabase local temp
+supabase/.temp/

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#ffb2b9",
+                    "surface-container-high": "#1f1f2a",
+                    "on-primary-fixed": "#3a4a00",
+                    "on-tertiary-fixed-variant": "#4000ad",
+                    "primary-dim": "#beee00",
+                    "on-tertiary": "#25006b",
+                    "on-secondary": "#005359",
+                    "outline": "#76747f",
+                    "primary": "#f3ffca",
+                    "on-tertiary-container": "#ffffff",
+                    "on-background": "#f2effb",
+                    "secondary-container": "#006970",
+                    "on-secondary-fixed-variant": "#005e64",
+                    "primary-container": "#cafd00",
+                    "on-secondary-fixed": "#003f43",
+                    "on-primary-fixed-variant": "#526900",
+                    "surface": "#0d0d16",
+                    "error": "#ff6e84",
+                    "surface-tint": "#f3ffca",
+                    "on-error": "#490013",
+                    "inverse-surface": "#fcf8ff",
+                    "surface-container-lowest": "#000000",
+                    "on-primary": "#516700",
+                    "inverse-on-surface": "#55545e",
+                    "on-secondary-container": "#e3fdff",
+                    "tertiary-container": "#7c4dff",
+                    "surface-container": "#191923",
+                    "secondary-dim": "#00deec",
+                    "secondary-fixed-dim": "#00deec",
+                    "surface-dim": "#0d0d16",
+                    "on-tertiary-fixed": "#1c0055",
+                    "tertiary-fixed": "#b8a3ff",
+                    "inverse-primary": "#516700",
+                    "tertiary-fixed-dim": "#ab93ff",
+                    "surface-bright": "#2b2b38",
+                    "error-dim": "#d73357",
+                    "on-primary-container": "#4a5e00",
+                    "surface-container-low": "#13131c",
+                    "outline-variant": "#484751",
+                    "surface-variant": "#252531",
+                    "on-surface": "#f2effb",
+                    "surface-container-highest": "#252531",
+                    "background": "#0d0d16",
+                    "primary-fixed-dim": "#beee00",
+                    "secondary-fixed": "#00eefc",
+                    "on-surface-variant": "#acaab5",
+                    "tertiary-dim": "#7e51ff",
+                    "primary-fixed": "#cafd00",
+                    "error-container": "#a70138",
+                    "tertiary": "#a68cff",
+                    "secondary": "#00eefc"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Spline Sans"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .font-spline-sans { font-family: 'Spline Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 py-4 fixed top-0 z-50 bg-surface-container-lowest/60 dark:bg-[#000000]/60 backdrop-blur-xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#f3ffca]" data-icon="location_on">location_on</span>
+<span class="text-sm font-medium text-[#f2effb]">Santos, SP</span>
+</div>
+<h1 class="text-2xl font-bold tracking-tighter text-[#f3ffca] font-spline-sans">PalcoJá</h1>
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[#f2effb]" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="mt-20 px-6">
+<!-- Hero Section / CTA -->
+<section class="mt-8 mb-10">
+<div class="relative w-full aspect-[16/7] rounded-[2rem] overflow-hidden group">
+<img alt="Pub Stage" class="w-full h-full object-cover brightness-50 transition-transform duration-700 group-hover:scale-105" data-alt="atmospheric shot of a high-end jazz club with glowing neon stage lights and silhouettes of instruments in dark shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTOizEzNM9ht64oM562Tcq8DQpaI5wVh4WHDl1d1ba0dK7n9pojIbJIMalzpFaN5mQbXQrTsFwnr3XrZRoiuXy0Xj6m8Tfrm1NCQHsRkrtF75dYh1Mx5MEbrVtltiX6c0Mlc608XMDu4XzTvlmm357U7DYUx-KLTXLjO6uh9fA4MckJqC4ACbil90gAVS7gt3ryZzyQTSRzb_kDbMXBkBwwQVxOLrgnawMAKh_qE8yYSpiIevyV_Eo1JrvMOBz6th4AWPqLTMcy9ZH"/>
+<div class="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/80 to-transparent">
+<p class="text-secondary text-xs font-bold uppercase tracking-[0.2em] mb-2">Conecte-se à Cena</p>
+<h2 class="text-3xl font-extrabold font-headline leading-none tracking-tighter mb-4 text-[#f3ffca]">
+                        Encontre o Som <br/> Perfeito.
+                    </h2>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 w-fit active:scale-95 transition-all shadow-[0_0_20px_rgba(243,255,202,0.2)]">
+                        Publicar Vaga
+                        <span class="material-symbols-outlined text-[20px]" data-icon="add_circle">add_circle</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Genre Filter Chips -->
+<section class="mb-8">
+<div class="flex gap-3 overflow-x-auto hide-scrollbar -mx-6 px-6">
+<button class="bg-primary text-on-primary px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap">
+                    Todos
+                </button>
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-surface-variant transition-colors">
+                    Sertanejo
+                </button>
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-surface-variant transition-colors">
+                    Jazz
+                </button>
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-surface-variant transition-colors">
+                    Pop Rock
+                </button>
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-surface-variant transition-colors">
+                    MPB
+                </button>
+<button class="bg-surface-container-high text-on-surface-variant px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-surface-variant transition-colors">
+                    Blues
+                </button>
+</div>
+</section>
+<!-- Featured Musicians Carousel -->
+<section class="mb-10">
+<div class="flex justify-between items-end mb-4">
+<h3 class="text-xl font-bold font-headline tracking-tight">Músicos em Destaque</h3>
+<span class="text-secondary text-xs font-bold uppercase tracking-wider">Ver Todos</span>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar -mx-6 px-6">
+<!-- Artist Card 1 -->
+<div class="min-w-[200px] w-[200px]">
+<div class="relative h-[260px] rounded-[1.5rem] overflow-hidden mb-3">
+<img alt="Featured Artist" class="w-full h-full object-cover" data-alt="close up of a musician singing with a high quality studio microphone in dramatic moody stage lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCNP1MVqWX--CL7LH0mPZK9V0jqA1WNuf29bb-0asXEXSRKAtdYVMhqZebf1LiI52kJ5_WLbjQ6eRlJ_Iud8ND6OFY6gvksK21a68GJ1ebQDx9D7aH3DH5mhyUh3HlPf1sjo3FkRM9Jgdx_9z2ceflxW-lmpCm8UOl_JurJRq96aUjx5fhackwPyAzUQtP8-gsbFEQ9t1H2KIIzYlkP6QtcUUHQwINkwgHxWJUrcPJSIPoJN6OlwSC1jJdYlD31i1VCu07rcFoTT3X"/>
+<div class="absolute top-3 left-3 bg-error-container/80 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+<span class="text-[10px] font-bold text-on-error uppercase">Live</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+<p class="text-white font-bold leading-tight">Clara Nunes</p>
+<p class="text-secondary text-[10px] uppercase tracking-widest font-medium">MPB • Soul</p>
+</div>
+</div>
+</div>
+<!-- Artist Card 2 -->
+<div class="min-w-[200px] w-[200px]">
+<div class="relative h-[260px] rounded-[1.5rem] overflow-hidden mb-3">
+<img alt="Featured Artist" class="w-full h-full object-cover" data-alt="rock guitarist performing a solo on stage under vibrant blue and magenta neon lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBecx5USlfWcrktGLuTXW_oEd0vVyCXrzBjnvhj89D4fm-xeG81d9Np9ukz4lfG3XOd5JHK3Th7tCNqTSl5DPeNvwxS5Plknme44lI2CM_N3ch9npaeB97521S1_9WSkeWBz-U4-sh2Wnh01DyeLU4uIF9W_1tdSEBM0czfKA7_zWMDd8FYFf-aiwwUvcilEVrMRcQO8N5kN7kDsOtmC71KfXN5cgb5JB6s6GAE96D7hfd8zk8mUI5HfRYAEZP11KYi971g4_7aJzR1"/>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+<p class="text-white font-bold leading-tight">Leo Britto</p>
+<p class="text-secondary text-[10px] uppercase tracking-widest font-medium">Rock • Blues</p>
+</div>
+</div>
+</div>
+<!-- Artist Card 3 -->
+<div class="min-w-[200px] w-[200px]">
+<div class="relative h-[260px] rounded-[1.5rem] overflow-hidden mb-3">
+<img alt="Featured Artist" class="w-full h-full object-cover" data-alt="female jazz pianist fingers on a grand piano with soft warm candlelight reflection on the black wood" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyH2A7lePDIiUXVLL6F_-Ik4OtLreIwc5d8WECJpxdr523WGr9-uinK_6i37H_o0vYrmb-Rq4gIw9uml4GuB-0NjY_tX2HkqIUHCA1YkvB07yjYAAgVcrgQ3bBxuidRYzOHycIGj37ejq-6Pk1T4Kt7gBzcKK9MyZrpQ455Sc5jOm8c4yiB4kSVzFfKAdFXtJas5WDlwHKf20UDIa-0ak9C9xzGHfsgBU3SSs_zXwMR3T5rW1WEXpLtSLqYl7OmeLAxoHUyxerPg_-"/>
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+<p class="text-white font-bold leading-tight">Sofia Mel</p>
+<p class="text-secondary text-[10px] uppercase tracking-widest font-medium">Jazz • Pop</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Musicians Nearby Feed (Bento Style) -->
+<section class="mb-12">
+<div class="flex justify-between items-end mb-6">
+<h3 class="text-xl font-bold font-headline tracking-tight">Músicos por Perto</h3>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<!-- Feed Item 1 -->
+<div class="bg-surface-variant/40 backdrop-blur-xl rounded-[1.5rem] p-4 flex gap-4 transition-transform active:scale-[0.98]">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0">
+<img alt="Artist Profile" class="w-full h-full object-cover" data-alt="professional saxophone player performing in a smoky dimly lit lounge environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbm81rwHyQkvKhx8bLQcuJJ5Xq-UMDNRZ5NB_pYbFhEwpTFhBenqVrYbJ7TSi-8vy3KHrDPs4BYW8vIsdPBNrok_igE8tc17Plq4RLqIK6EfLLkUqgnkVixOBBJ3kfti_VOwi2goKO_URQKSTGgsk3i_MBrRb17CToH7RM7xelfbMicCHbu4OTU5BzpzamS66JOHStBSifW7_yEgHuZPojp40PQH3fK32Rq_Zrpllc4Lo_-nQ7spWXXEMYtGCeOYFTYTW4Nxh1PKx1"/>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-lg leading-none">Gabriel Jazz</h4>
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-0.5 rounded-md">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm mt-1">Saxofone • Jazz Contemporâneo</p>
+</div>
+<div class="flex justify-between items-center mt-3">
+<p class="text-primary font-bold">R$ 350<span class="text-[10px] text-on-surface-variant font-normal">/noite</span></p>
+<button class="text-secondary-dim text-xs font-bold uppercase tracking-widest">Contratar</button>
+</div>
+</div>
+</div>
+<!-- Feed Item 2 -->
+<div class="bg-surface-variant/40 backdrop-blur-xl rounded-[1.5rem] p-4 flex gap-4 transition-transform active:scale-[0.98]">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0">
+<img alt="Artist Profile" class="w-full h-full object-cover" data-alt="acoustic guitarist playing a wooden guitar outdoors at sunset with golden bokeh lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpj46uyej_R-OR-d-UCt4Kcjl1Gil-K70IJvzeJ9ZLfWfZkAKGTQQbaxIn6vJUD8YBtR6L-aMlypNv6mGP-QO-tkGrQwe7Yqi-4Mc4g5AaokLqINmknBsA3vi3T_Fogqze6FwWv1jX42TMmz5Tx6AS8vFT7CTPmXAQSp4rNTFg78idtYDK1LY_uMNoT4vrGfvqH5vNU8PeoYXOo5ZJHmiyf_yShmAp8Nnqc2ePcZbkQhdGrZIeG9coYB1ixJ9ChRgMCils1iDCMkGd"/>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-lg leading-none">Marina Voz</h4>
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-0.5 rounded-md">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">4.8</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm mt-1">Vocal • MPB • Pop Rock</p>
+</div>
+<div class="flex justify-between items-center mt-3">
+<p class="text-primary font-bold">R$ 280<span class="text-[10px] text-on-surface-variant font-normal">/noite</span></p>
+<button class="text-secondary-dim text-xs font-bold uppercase tracking-widest">Contratar</button>
+</div>
+</div>
+</div>
+<!-- Feed Item 3 -->
+<div class="bg-surface-variant/40 backdrop-blur-xl rounded-[1.5rem] p-4 flex gap-4 transition-transform active:scale-[0.98]">
+<div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0">
+<img alt="Artist Profile" class="w-full h-full object-cover" data-alt="electric guitar leaning against a vintage amplifier in a garage band rehearsal space with dramatic light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgsKk5S1QLngWb-SKiMpX9z4fMMQMxaTikw-PGxY02AH-PJzPG1DKXsZwAr0jReKCZxYE0tZGL8TbpggSLKU2LgaFv3_fsOhevFr61Tnuhw_imu5HZV4_0pgh6WrZvEemXanLyjZ6v_9EsTwagbgLOkQ_ndDjK6oysqznhsCn7y0GXtZKgomzasoEtu2E73xuFHvJHi3gNQlHP2Gx0VWGwYEjZYxSw9lmKAIogATdIcPLK-353BBnzyz3ORDwwm9dJyveXIxU74tz7"/>
+</div>
+<div class="flex flex-col justify-between flex-grow">
+<div>
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-lg leading-none">Duo Eletro</h4>
+<div class="flex items-center gap-1 bg-surface-container-highest px-2 py-0.5 rounded-md">
+<span class="material-symbols-outlined text-[14px] text-primary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-xs font-bold">5.0</span>
+</div>
+</div>
+<p class="text-on-surface-variant text-sm mt-1">Guitarra • Bateria • Rock</p>
+</div>
+<div class="flex justify-between items-center mt-3">
+<p class="text-primary font-bold">R$ 500<span class="text-[10px] text-on-surface-variant font-normal">/noite</span></p>
+<button class="text-secondary-dim text-xs font-bold uppercase tracking-widest">Contratar</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-surface-variant/60 dark:bg-[#252531]/60 backdrop-blur-xl rounded-t-[24px] shadow-[0_-4px_24px_rgba(243,255,202,0.08)]">
+<div class="flex flex-col items-center justify-center bg-[#f3ffca] text-black rounded-[1.5rem] px-4 py-1.5 transition-all">
+<span class="material-symbols-outlined" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider mt-0.5">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider mt-0.5">Search</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider mt-0.5">Calendar</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider mt-0.5">Chat</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#f2effb]/70 hover:text-[#00eefc] transition-colors active:scale-90 duration-200">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-manrope text-[10px] font-medium uppercase tracking-wider mt-0.5">Profile</span>
+</div>
+</nav>
+</body></html>
