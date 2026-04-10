@@ -183,7 +183,9 @@ Sequencia atual de task: 165
 | TASK-167 | Publicar build release com fundacao de notificacoes push | DONE | 2026-04-09 | 2026-04-09 | BKL-005, BKL-032 | [tasks/TASK-167-release-build-and-adb-publish-push-notifications.md](tasks/TASK-167-release-build-and-adb-publish-push-notifications.md) |
 | TASK-168 | Homologar notificacoes push no device | IN_PROGRESS | 2026-04-09 |  | BKL-032 | [tasks/TASK-168-validate-push-notifications-on-device.md](tasks/TASK-168-validate-push-notifications-on-device.md) |
 | TASK-169 | Criar README detalhado do repositorio | DONE | 2026-04-10 | 2026-04-10 | Processo do projeto | [tasks/TASK-169-create-detailed-repository-readme.md](tasks/TASK-169-create-detailed-repository-readme.md) |
+| TASK-170 | Criar script de backup completo do Codex e workspaces | DONE | 2026-04-10 | 2026-04-10 | Processo do projeto | [tasks/TASK-170-create-full-codex-backup-script.md](tasks/TASK-170-create-full-codex-backup-script.md) |
+| TASK-171 | Criar script de restore do Codex e documento de backup/restore | DONE | 2026-04-10 | 2026-04-10 | Processo do projeto | [tasks/TASK-171-create-codex-restore-script-and-backup-doc.md](tasks/TASK-171-create-codex-restore-script-and-backup-doc.md) |
 
 ## Proxima numeracao
 
-- Proxima task a ser aberta: `TASK-170`
+- Proxima task a ser aberta: `TASK-172`
