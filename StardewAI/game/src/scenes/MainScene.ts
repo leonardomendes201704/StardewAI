@@ -61,7 +61,9 @@ export class MainScene extends Phaser.Scene {
     const campfireX = 19 * TILE_SIZE + TILE_SIZE / 2
     const campfireY = 15 * TILE_SIZE + TILE_SIZE / 2
     addBlockedTile(19, 15)
-    const campfire = this.add.image(campfireX, campfireY, 'campfire').setDepth(0)
+    const campfire = this.physics.add.image(campfireX, campfireY, 'campfire').setDepth(0).setImmovable(true)
+    ;(campfire.body as Phaser.Physics.Arcade.Body).setSize(24, 20).setOffset(4, 10)
+    this.physics.add.collider(this.player, campfire)
     this.tweens.add({
       targets: campfire,
       scaleX: 1.1,
