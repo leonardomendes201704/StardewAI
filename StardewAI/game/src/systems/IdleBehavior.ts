@@ -1,46 +1,42 @@
 import Phaser from 'phaser'
 import { AgentNPC } from '../entities/AgentNPC'
 import { TILE_SIZE } from '../config'
+import { findPath, pixelToTile, tileToPixel } from './Pathfinder'
 
-// Points of interest where NPCs can wander to
-const CAMPFIRE_POS = { x: 19 * TILE_SIZE + TILE_SIZE / 2, y: 15 * TILE_SIZE + TILE_SIZE / 2 }
+const CAMPFIRE_TILE = { x: 19, y: 15 }
 
-const WANDER_POINTS = [
-  { x: 15, y: 10 },
-  { x: 25, y: 10 },
-  { x: 15, y: 18 },
-  { x: 25, y: 18 },
-  { x: 19, y: 12 },
-  { x: 19, y: 17 },
-  { x: 12, y: 14 },
-  { x: 27, y: 14 },
-].map(p => ({ x: p.x * TILE_SIZE + TILE_SIZE / 2, y: p.y * TILE_SIZE + TILE_SIZE / 2 }))
+const WANDER_TILES = [
+  { x: 15, y: 10 }, { x: 25, y: 10 },
+  { x: 15, y: 18 }, { x: 25, y: 18 },
+  { x: 19, y: 12 }, { x: 19, y: 17 },
+  { x: 12, y: 14 }, { x: 27, y: 14 },
+]
 
-type IdleState = 'home' | 'deciding' | 'walking-out' | 'resting' | 'walking-back'
+type IdleState = 'home' | 'deciding' | 'walking' | 'resting' | 'walking-back' | 'paused-by-player'
 
 export class IdleBehavior {
   private scene: Phaser.Scene
   private npc: AgentNPC
-  private state: IdleState = 'home'
-  private active = true
+  public state: IdleState = 'home'
+  public active = true
   private currentTween: Phaser.Tweens.Tween | null = null
-  private timer: ReturnType<typeof setTimeout> | null = null
+  public timer: ReturnType<typeof setTimeout> | null = null
   private restingTween: Phaser.Tweens.Tween | null = null
+  private pathQueue: { x: number; y: number }[] = []
+  private walkingCallback: (() => void) | null = null
 
   constructor(scene: Phaser.Scene, npc: AgentNPC) {
     this.scene = scene
     this.npc = npc
-    // Start first decision after random delay (stagger NPCs)
     this.scheduleNextDecision(3000 + Math.random() * 5000)
   }
 
   private scheduleNextDecision(delay: number): void {
     this.clearTimer()
     this.timer = setTimeout(() => {
-      if (this.active && this.npc.getState() === 'idle') {
+      if (this.active && this.npc.getState() === 'idle' && this.state !== 'paused-by-player') {
         this.decide()
       } else {
-        // Retry later if busy
         this.scheduleNextDecision(3000 + Math.random() * 3000)
       }
     }, delay)
@@ -49,75 +45,96 @@ export class IdleBehavior {
   private decide(): void {
     this.state = 'deciding'
 
-    // 40% campfire, 60% random wander point
-    const goToCampfire = Math.random() < 0.4
-    let targetX: number
-    let targetY: number
+    // Choose destination tile
+    let targetTile: { x: number; y: number }
 
-    if (goToCampfire) {
-      const offset = (Math.random() - 0.5) * 30
-      targetX = CAMPFIRE_POS.x + offset
-      targetY = CAMPFIRE_POS.y + 16 + Math.random() * 16
+    if (Math.random() < 0.4) {
+      // Go near campfire
+      const offsets = [{ x: 0, y: 1 }, { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 2 }]
+      const off = offsets[Math.floor(Math.random() * offsets.length)]
+      targetTile = { x: CAMPFIRE_TILE.x + off.x, y: CAMPFIRE_TILE.y + off.y }
     } else {
-      const point = WANDER_POINTS[Math.floor(Math.random() * WANDER_POINTS.length)]
-      targetX = point.x + (Math.random() - 0.5) * 20
-      targetY = point.y + (Math.random() - 0.5) * 20
+      targetTile = WANDER_TILES[Math.floor(Math.random() * WANDER_TILES.length)]
     }
 
-    this.walkTo(targetX, targetY, () => {
+    const from = pixelToTile(this.npc.x, this.npc.y, TILE_SIZE)
+    const path = findPath(from.x, from.y, targetTile.x, targetTile.y)
+
+    if (path.length === 0) {
+      // No path, try again later
+      this.state = 'home'
+      this.scheduleNextDecision(2000 + Math.random() * 3000)
+      return
+    }
+
+    this.walkAlongPath(path, () => {
       this.state = 'resting'
       this.startRestAnimation()
       const restDuration = 5000 + Math.random() * 10000
       this.timer = setTimeout(() => {
         this.stopRestAnimation()
-        this.walkHome()
+        this.goHome()
       }, restDuration)
     })
   }
 
-  private walkTo(x: number, y: number, onComplete: () => void): void {
-    this.state = 'walking-out'
-    const dist = Phaser.Math.Distance.Between(this.npc.x, this.npc.y, x, y)
-    const duration = Math.max(800, dist * 5) // Slow leisurely walk
+  private goHome(): void {
+    this.state = 'walking-back'
+    const from = pixelToTile(this.npc.x, this.npc.y, TILE_SIZE)
+    const homeTile = pixelToTile(this.npc.homeX, this.npc.homeY, TILE_SIZE)
+    const path = findPath(from.x, from.y, homeTile.x, homeTile.y)
 
-    this.currentTween = this.scene.tweens.add({
-      targets: this.npc,
-      x, y,
-      duration,
-      ease: 'Sine.easeInOut',
-      onUpdate: () => this.npc.updateAttachmentsPublic(),
-      onComplete: () => {
-        this.currentTween = null
-        onComplete()
-      },
+    if (path.length === 0) {
+      // Already home or can't reach
+      this.state = 'home'
+      this.npc.updateAttachmentsPublic()
+      this.scheduleNextDecision(4000 + Math.random() * 6000)
+      return
+    }
+
+    this.walkAlongPath(path, () => {
+      this.state = 'home'
+      this.npc.updateAttachmentsPublic()
+      this.scheduleNextDecision(4000 + Math.random() * 6000)
     })
   }
 
-  private walkHome(): void {
-    this.state = 'walking-back'
-    const dist = Phaser.Math.Distance.Between(this.npc.x, this.npc.y, this.npc.homeX, this.npc.homeY)
-    const duration = Math.max(800, dist * 5)
+  /** Walk tile-by-tile along a path */
+  private walkAlongPath(path: { x: number; y: number }[], onComplete: () => void): void {
+    this.pathQueue = [...path]
+    this.walkingCallback = onComplete
+    this.state = this.state === 'walking-back' ? 'walking-back' : 'walking'
+    this.walkNextStep()
+  }
+
+  private walkNextStep(): void {
+    if (!this.active || this.state === 'paused-by-player') return
+
+    if (this.pathQueue.length === 0) {
+      this.currentTween = null
+      this.walkingCallback?.()
+      this.walkingCallback = null
+      return
+    }
+
+    const nextTile = this.pathQueue.shift()!
+    const target = tileToPixel(nextTile.x, nextTile.y, TILE_SIZE)
 
     this.currentTween = this.scene.tweens.add({
       targets: this.npc,
-      x: this.npc.homeX,
-      y: this.npc.homeY,
-      duration,
-      ease: 'Sine.easeInOut',
+      x: target.x,
+      y: target.y,
+      duration: 280,
+      ease: 'Linear',
       onUpdate: () => this.npc.updateAttachmentsPublic(),
       onComplete: () => {
         this.currentTween = null
-        this.state = 'home'
-        this.npc.restartIdleBob()
-        this.npc.updateAttachmentsPublic()
-        // Schedule next roam
-        this.scheduleNextDecision(4000 + Math.random() * 6000)
+        this.walkNextStep()
       },
     })
   }
 
   private startRestAnimation(): void {
-    // Gentle bob while resting (slower than idle)
     this.restingTween = this.scene.tweens.add({
       targets: this.npc,
       y: this.npc.y - 1,
@@ -136,11 +153,52 @@ export class IdleBehavior {
     }
   }
 
-  /** Stop all roaming immediately (task assigned) */
+  /** Player is nearby — freeze */
+  pauseForPlayer(): void {
+    if (this.state === 'home' || this.state === 'paused-by-player') return
+    const prevState = this.state
+    this.state = 'paused-by-player'
+    this.clearTimer()
+    this.stopRestAnimation()
+    if (this.currentTween) {
+      this.currentTween.destroy()
+      this.currentTween = null
+    }
+    // Keep pathQueue so we can resume
+    this._prevState = prevState
+  }
+
+  private _prevState: IdleState = 'home'
+
+  /** Player left — resume */
+  resumeFromPlayer(): void {
+    if (this.state !== 'paused-by-player') return
+
+    if (this.pathQueue.length > 0) {
+      // Resume walking the remaining path
+      this.state = this._prevState === 'walking-back' ? 'walking-back' : 'walking'
+      this.walkNextStep()
+    } else if (this._prevState === 'resting') {
+      // Was resting, resume rest
+      this.state = 'resting'
+      this.startRestAnimation()
+      this.timer = setTimeout(() => {
+        this.stopRestAnimation()
+        this.goHome()
+      }, 3000 + Math.random() * 5000)
+    } else {
+      this.state = 'home'
+      this.scheduleNextDecision(2000 + Math.random() * 3000)
+    }
+  }
+
+  /** Stop all roaming (task assigned) */
   pause(): void {
     this.active = false
     this.clearTimer()
     this.stopRestAnimation()
+    this.pathQueue = []
+    this.walkingCallback = null
     if (this.currentTween) {
       this.currentTween.destroy()
       this.currentTween = null
@@ -148,7 +206,7 @@ export class IdleBehavior {
     this.state = 'home'
   }
 
-  /** Resume roaming (task done + dismissed) */
+  /** Resume roaming (task dismissed) */
   resume(): void {
     this.active = true
     this.state = 'home'

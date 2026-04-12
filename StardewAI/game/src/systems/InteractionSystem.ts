@@ -42,8 +42,14 @@ export class InteractionSystem {
     }
 
     if (closest !== this.nearestNPC) {
+      // Player left previous NPC
+      if (this.nearestNPC) {
+        this.nearestNPC.onPlayerLeft()
+      }
       this.nearestNPC = closest
       if (closest) {
+        // Player approached new NPC
+        closest.onPlayerNear()
         this.scene.game.events.emit('show-interact-prompt', closest)
       } else {
         this.scene.game.events.emit('hide-interact-prompt')
