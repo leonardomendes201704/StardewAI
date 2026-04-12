@@ -37,6 +37,14 @@ export class TaskManager {
         if (data.type === 'chat') {
           // Chat response — show inline, NPC stays put
           this.scene.game.events.emit('agent-chat-response', agentId, data.result)
+        } else if (data.type === 'evolve') {
+          // NPC modified the game code! Show message then reload
+          this.scene.game.events.emit('agent-chat-response', agentId,
+            '🔧 EVOLUCAO! Modifiquei o codigo do jogo.\n\n' + data.result + '\n\nRecarregando em 5 segundos...')
+          // Auto-reload after showing the message
+          window.setTimeout(() => {
+            window.location.reload()
+          }, 5000)
         } else {
           // Task response — NPC goes to desk, works, then comes back
           const task: Task = {
@@ -48,14 +56,12 @@ export class TaskManager {
             startedAt: Date.now(),
           }
           this.tasks.set(agentId, task)
-          // First go to desk (working state)
           this.scene.game.events.emit('task-status-changed', agentId, 'working' as AgentStatus)
-          // After a brief desk animation, mark as done
           window.setTimeout(() => {
             task.status = 'done'
             task.completedAt = Date.now()
             this.scene.game.events.emit('task-status-changed', agentId, 'done' as AgentStatus)
-          }, 4000) // 4s at desk
+          }, 4000)
         }
       } else {
         this.scene.game.events.emit('agent-chat-response', agentId,

@@ -29,19 +29,26 @@ Arquivos importantes que voce pode consultar:
 
 Voce mora em uma vila com 4 salas (NW, NE, SW, SE), caminhos de terra, uma fogueira central, um lago ao sul, e arvores nas bordas.
 Os outros agentes sao: Codex (programador), Scholar (pesquisador), Sentinel (testador), Pixel (designer).
-Quando o jogador te pede algo, voce pode consultar o codigo para dar respostas precisas sobre o jogo.`
+Quando o jogador te pede algo, voce pode consultar o codigo para dar respostas precisas sobre o jogo.
+
+AUTO-EVOLUCAO:
+Se o jogador pedir algo que o jogo NAO suporta atualmente (uma acao, feature, ou comportamento que nao existe no codigo), voce TEM A CAPACIDADE de modificar o codigo-fonte para adicionar essa feature.
+Voce pode usar as ferramentas Edit e Write para alterar arquivos TypeScript em src/.
+Quando voce fizer isso, descreva o que mudou de forma clara.`
 
 const CLASSIFICATION_RULE = `
 
 REGRA IMPORTANTE DE CLASSIFICACAO:
-Voce DEVE classificar cada mensagem do usuario como CONVERSA ou TAREFA.
-- CONVERSA: perguntas casuais, cumprimentos, pedidos de explicacao, bate-papo geral. Exemplos: "oi", "o que voce faz?", "me explica o que e React", "tudo bem?"
-- TAREFA: pedidos que exigem trabalho real, como criar codigo, testar algo, fazer design, pesquisar a fundo. Exemplos: "crie uma funcao", "teste o login", "faca um layout", "pesquise sobre X e documente"
+Voce DEVE classificar cada mensagem do usuario como CONVERSA, TAREFA ou EVOLUCAO.
+- CONVERSA: perguntas casuais, cumprimentos, pedidos de explicacao, bate-papo geral.
+- TAREFA: pedidos que exigem trabalho real dentro da sua especialidade (criar codigo, testar, pesquisar, design).
+- EVOLUCAO: pedidos que exigem MODIFICAR O CODIGO DO JOGO — adicionar features, mudar comportamento de NPCs, alterar o mapa, criar novas acoes. Quando o jogador pede algo que o jogo nao suporta, voce deve EVOLUIR o jogo.
 
 FORMATO DA RESPOSTA:
-- Se for CONVERSA, comece sua resposta EXATAMENTE com [CHAT] na primeira linha, depois responda normalmente.
-- Se for TAREFA, comece sua resposta EXATAMENTE com [TASK] na primeira linha, depois execute a tarefa.
-- NUNCA omita o prefixo [CHAT] ou [TASK].`
+- Se for CONVERSA, comece com [CHAT] na primeira linha.
+- Se for TAREFA, comece com [TASK] na primeira linha.
+- Se for EVOLUCAO, comece com [EVOLVE] na primeira linha. Neste caso, MODIFIQUE os arquivos necessarios usando as ferramentas Edit/Write, e descreva o que voce mudou.
+- NUNCA omita o prefixo.`
 
 const AGENT_PERSONAS = {
   coder: `Voce e o Codex, um programador especialista.
@@ -132,13 +139,13 @@ const server = createServer((req, res) => {
         // Build command string with proper quoting
         const escapedPrompt = prompt.replace(/"/g, '\\"')
         const escapedPath = tmpFile.replace(/\\/g, '/')
-        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}"`
+        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}" --allowedTools "Read,Grep,Glob,Edit,Write"`
 
-        console.log(`[${agentRole}] CMD: ${cmd.substring(0, 120)}...`)
+        console.log(`[${agentRole}] CMD: ${cmd.substring(0, 150)}...`)
 
         exec(cmd, {
-          maxBuffer: 1024 * 1024,
-          timeout: 120000,
+          maxBuffer: 1024 * 1024 * 5,
+          timeout: 180000,
           env: { ...process.env },
         }, (err, stdout, stderr) => {
           // Clean up temp file
@@ -156,12 +163,16 @@ const server = createServer((req, res) => {
 
           const raw = stdout.trim()
           if (raw) {
-            // Parse [CHAT] or [TASK] prefix
+            // Parse [CHAT], [TASK], or [EVOLVE] prefix
             let type = 'task'
             let result = raw
             if (raw.startsWith('[CHAT]')) {
               type = 'chat'
               result = raw.substring(6).trim()
+            } else if (raw.startsWith('[EVOLVE]')) {
+              type = 'evolve'
+              result = raw.substring(8).trim()
+              console.log(`[${agentRole}] EVOLVE — NPC modified game code!`)
             } else if (raw.startsWith('[TASK]')) {
               type = 'task'
               result = raw.substring(6).trim()
