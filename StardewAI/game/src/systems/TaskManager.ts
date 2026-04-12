@@ -17,8 +17,8 @@ export class TaskManager {
   sendMessage(agentId: string, agentRole: string, prompt: string): void {
     const id = `task-${++this.taskCounter}`
 
-    // Show "thinking" state briefly
-    this.scene.game.events.emit('agent-thinking', agentId)
+    // Show hourglass on NPC head while Claude thinks
+    this.scene.game.events.emit('task-status-changed', agentId, 'thinking' as AgentStatus)
 
     this.executeMessage(id, agentId, agentRole, prompt)
   }

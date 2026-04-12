@@ -60,6 +60,22 @@ export function generateStatusTextures(scene: Phaser.Scene): void {
   errGfx.fillRect(4, 10, 2, 2)
   errGfx.generateTexture('status-error', size, size)
   errGfx.destroy()
+
+  // Thinking - yellow hourglass
+  const thinkGfx = scene.add.graphics()
+  thinkGfx.fillStyle(0xffcc00, 0.9)
+  thinkGfx.fillCircle(size / 2, size / 2, size / 2 - 1)
+  // Hourglass shape
+  thinkGfx.fillStyle(0xffffff, 1)
+  thinkGfx.fillRect(4, 3, 8, 2)   // top bar
+  thinkGfx.fillRect(5, 5, 6, 1)
+  thinkGfx.fillRect(6, 6, 4, 1)
+  thinkGfx.fillRect(7, 7, 2, 2)   // middle
+  thinkGfx.fillRect(6, 9, 4, 1)
+  thinkGfx.fillRect(5, 10, 6, 1)
+  thinkGfx.fillRect(4, 11, 8, 2)  // bottom bar
+  thinkGfx.generateTexture('status-thinking', size, size)
+  thinkGfx.destroy()
 }
 
 export class StatusBubble extends Phaser.GameObjects.Container {
@@ -97,13 +113,24 @@ export class StatusBubble extends Phaser.GameObjects.Container {
 
     const textureMap: Record<AgentStatus, string> = {
       idle: 'status-idle',
+      thinking: 'status-thinking',
       working: 'status-working',
       done: 'status-done',
       error: 'status-error',
     }
     this.bubble.setTexture(textureMap[status])
 
-    if (status === 'working') {
+    if (status === 'thinking') {
+      // Rotating hourglass
+      this.rotateTween = this.scene.tweens.add({
+        targets: this.bubble,
+        angle: 180,
+        duration: 1000,
+        repeat: -1,
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+      })
+    } else if (status === 'working') {
       this.rotateTween = this.scene.tweens.add({
         targets: this.bubble,
         angle: 360,

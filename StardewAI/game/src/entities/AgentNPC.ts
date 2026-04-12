@@ -419,7 +419,11 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   setAgentStatus(status: AgentStatus): void {
     this.statusBubble.setStatus(status)
 
-    if (status === 'working') {
+    if (status === 'thinking') {
+      // NPC stays put, just shows hourglass — pause roaming
+      this.idleBehavior?.pause()
+      this.stopPathWalking()
+    } else if (status === 'working') {
       this.idleBehavior?.pause()
       this.hideDoneBalloon()
       this.walkToDesk()

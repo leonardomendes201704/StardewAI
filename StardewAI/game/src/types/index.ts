@@ -1,5 +1,5 @@
 export type AgentRole = 'coder' | 'researcher' | 'tester' | 'designer'
-export type AgentStatus = 'idle' | 'working' | 'done' | 'error'
+export type AgentStatus = 'idle' | 'thinking' | 'working' | 'done' | 'error'
 
 export interface AgentDefinition {
   id: string

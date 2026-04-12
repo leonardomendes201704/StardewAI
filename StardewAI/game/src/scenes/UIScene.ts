@@ -91,21 +91,22 @@ export class UIScene extends Phaser.Scene {
       }
     })
 
-    // Agent is thinking (brief loading state)
-    this.game.events.on('agent-thinking', (agentId: string) => {
-      const agent = AGENTS.find(a => a.id === agentId)
-      if (agent) {
-        this.dialogPanel.showThinking(agent)
-        this.dialogPanel.setVisible(true)
-        this.game.events.emit('dialog-opened')
-      }
-    })
-
     // Agent chat response (no desk walk, inline reply)
     this.game.events.on('agent-chat-response', (agentId: string, message: string) => {
       const agent = AGENTS.find(a => a.id === agentId)
       if (agent) {
+        // Reset NPC status back to idle (remove hourglass)
+        const npc = this.game.scene.getScene('MainScene')?.children?.list?.find(
+          (c: any) => c.agentDef?.id === agentId
+        ) as any
+        if (npc) {
+          npc.statusBubble.setStatus('idle')
+          npc.idleBehavior?.resume()
+        }
+        // Show response in dialog panel
         this.dialogPanel.showChatResponse(agent, message)
+        this.dialogPanel.setVisible(true)
+        this.game.events.emit('dialog-opened')
       }
     })
   }
