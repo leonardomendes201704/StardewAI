@@ -3,7 +3,7 @@ import { AgentDefinition, AgentStatus } from '../types'
 import { TILE_SIZE } from '../config'
 import { StatusBubble } from '../ui/StatusBubble'
 import { IdleBehavior } from '../systems/IdleBehavior'
-import { findPath, pixelToTile, tileToPixel } from '../systems/Pathfinder'
+import { findPath, pixelToTile, tileToPixel, registerOccupied, unregisterOccupied } from '../systems/Pathfinder'
 
 // Generate 4 directional textures per NPC (like Player)
 export function generateNPCTexture(scene: Phaser.Scene, id: string, color: number): void {
@@ -77,6 +77,8 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   private pathQueue: { x: number; y: number }[] = []
   private currentPathTween: Phaser.Tweens.Tween | null = null
   private pathCallback: (() => void) | null = null
+  private currentTileX = 0
+  private currentTileY = 0
 
   // "Oi" balloon
   private oiBalloonBg: Phaser.GameObjects.Rectangle | null = null
@@ -104,6 +106,12 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.setOffset(6, 10)
 
     this.npcState = 'idle'
+
+    // Register initial tile position
+    this.currentTileX = def.tileX
+    this.currentTileY = def.tileY
+    registerOccupied(this.currentTileX, this.currentTileY, def.id)
+
     this.idleBehavior = new IdleBehavior(scene, this)
 
     this.statusBubble = new StatusBubble(scene, px, py)
@@ -166,7 +174,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
 
   private walkPath(targetTileX: number, targetTileY: number, onComplete: () => void): void {
     const from = pixelToTile(this.x, this.y, TILE_SIZE)
-    const path = findPath(from.x, from.y, targetTileX, targetTileY)
+    const path = findPath(from.x, from.y, targetTileX, targetTileY, this.agentDef.id)
 
     if (path.length === 0) {
       onComplete()
@@ -192,8 +200,14 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     // Face the direction we're moving
     this.faceDirection(target.x, target.y)
 
-    // Emit door event if this tile is a door
+    // Emit door event
     this.scene.game.events.emit('npc-on-tile', nextTile.x, nextTile.y)
+
+    // Update occupied tile
+    unregisterOccupied(this.currentTileX, this.currentTileY, this.agentDef.id)
+    this.currentTileX = nextTile.x
+    this.currentTileY = nextTile.y
+    registerOccupied(this.currentTileX, this.currentTileY, this.agentDef.id)
 
     this.currentPathTween = this.scene.tweens.add({
       targets: this,

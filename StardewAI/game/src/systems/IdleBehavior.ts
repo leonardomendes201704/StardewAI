@@ -58,7 +58,7 @@ export class IdleBehavior {
     }
 
     const from = pixelToTile(this.npc.x, this.npc.y, TILE_SIZE)
-    const path = findPath(from.x, from.y, targetTile.x, targetTile.y)
+    const path = findPath(from.x, from.y, targetTile.x, targetTile.y, this.npc.agentDef.id)
 
     if (path.length === 0) {
       // No path, try again later
@@ -82,7 +82,7 @@ export class IdleBehavior {
     this.state = 'walking-back'
     const from = pixelToTile(this.npc.x, this.npc.y, TILE_SIZE)
     const homeTile = pixelToTile(this.npc.homeX, this.npc.homeY, TILE_SIZE)
-    const path = findPath(from.x, from.y, homeTile.x, homeTile.y)
+    const path = findPath(from.x, from.y, homeTile.x, homeTile.y, this.npc.agentDef.id)
 
     if (path.length === 0) {
       // Already home or can't reach
