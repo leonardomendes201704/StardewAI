@@ -48,6 +48,34 @@ function generateDeskTexture(scene: Phaser.Scene): void {
   gfx.destroy()
 }
 
+function generateDoorTextures(scene: Phaser.Scene): void {
+  const S = TILE_SIZE
+
+  // Door closed (matches tileset door tile 6)
+  const closedGfx = scene.add.graphics()
+  closedGfx.fillStyle(0x6b4c2a, 1)
+  closedGfx.fillRect(4, 2, 24, 28)
+  closedGfx.fillStyle(0x8b6834, 1)
+  closedGfx.fillRect(6, 4, 20, 24)
+  closedGfx.fillStyle(0xa07840, 1)
+  closedGfx.fillRect(8, 6, 16, 20)
+  closedGfx.fillStyle(0xffcc00, 1)
+  closedGfx.fillRect(22, 14, 3, 3)
+  closedGfx.generateTexture('door-closed', S, S)
+  closedGfx.destroy()
+
+  // Door open (shifted to side, revealing dark interior)
+  const openGfx = scene.add.graphics()
+  openGfx.fillStyle(0x222233, 1) // dark interior
+  openGfx.fillRect(4, 2, 24, 28)
+  openGfx.fillStyle(0x6b4c2a, 1) // door panel pushed left
+  openGfx.fillRect(2, 2, 8, 28)
+  openGfx.fillStyle(0x8b6834, 1)
+  openGfx.fillRect(3, 4, 6, 24)
+  openGfx.generateTexture('door-open', S, S)
+  openGfx.destroy()
+}
+
 function generateCampfireTexture(scene: Phaser.Scene): void {
   const gfx = scene.add.graphics()
   const S = TILE_SIZE
@@ -121,6 +149,7 @@ export class BootScene extends Phaser.Scene {
 
     statusText.setText('Gerando mobilia...')
     generateDeskTexture(this)
+    generateDoorTextures(this)
     generateCampfireTexture(this)
 
     statusText.setText('Gerando icones...')

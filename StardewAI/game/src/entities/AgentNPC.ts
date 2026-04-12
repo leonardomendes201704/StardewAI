@@ -5,25 +5,48 @@ import { StatusBubble } from '../ui/StatusBubble'
 import { IdleBehavior } from '../systems/IdleBehavior'
 import { findPath, pixelToTile, tileToPixel } from '../systems/Pathfinder'
 
+// Generate 4 directional textures per NPC (like Player)
 export function generateNPCTexture(scene: Phaser.Scene, id: string, color: number): void {
-  const gfx = scene.add.graphics()
+  const dirs = ['down', 'left', 'right', 'up']
+  for (let row = 0; row < 4; row++) {
+    const gfx = scene.add.graphics()
 
-  gfx.fillStyle(color, 1)
-  gfx.fillRect(8, 10, 16, 16)
-  gfx.fillStyle(0xffcc99, 1)
-  gfx.fillRect(10, 2, 12, 10)
-  gfx.fillStyle(color, 1)
-  gfx.fillRect(9, 1, 14, 4)
-  gfx.fillStyle(0x000000, 1)
-  gfx.fillRect(12, 7, 2, 2)
-  gfx.fillRect(18, 7, 2, 2)
-  gfx.fillRect(13, 10, 6, 1)
-  gfx.fillStyle(darken(color), 1)
-  gfx.fillRect(10, 26, 5, 4)
-  gfx.fillRect(17, 26, 5, 4)
+    // Body
+    gfx.fillStyle(color, 1)
+    gfx.fillRect(8, 10, 16, 16)
+    // Head
+    gfx.fillStyle(0xffcc99, 1)
+    gfx.fillRect(10, 2, 12, 10)
+    // Hair/hat
+    gfx.fillStyle(color, 1)
+    gfx.fillRect(9, 1, 14, 4)
 
-  gfx.generateTexture(`npc-${id}`, TILE_SIZE, TILE_SIZE)
-  gfx.destroy()
+    // Eyes based on direction
+    gfx.fillStyle(0x000000, 1)
+    if (row === 0) { // down
+      gfx.fillRect(12, 7, 2, 2)
+      gfx.fillRect(18, 7, 2, 2)
+    } else if (row === 1) { // left
+      gfx.fillRect(11, 7, 2, 2)
+    } else if (row === 2) { // right
+      gfx.fillRect(19, 7, 2, 2)
+    }
+    // up (row 3) — no eyes
+
+    // Smile (only when facing down)
+    if (row === 0) {
+      gfx.fillStyle(0x000000, 1)
+      gfx.fillRect(13, 10, 6, 1)
+    }
+
+    // Legs
+    gfx.fillStyle(darken(color), 1)
+    gfx.fillRect(10, 26, 5, 4)
+    gfx.fillRect(17, 26, 5, 4)
+
+    gfx.generateTexture(`npc-${id}-${dirs[row]}`, TILE_SIZE, TILE_SIZE)
+    gfx.destroy()
+  }
 }
 
 function darken(color: number): number {
@@ -48,6 +71,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   private npcState: NPCState = 'idle'
   private typingTween: Phaser.Tweens.Tween | null = null
   public idleBehavior: IdleBehavior | null = null
+  private currentDir = 'down'
 
   // Path walking
   private pathQueue: { x: number; y: number }[] = []
@@ -63,7 +87,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     const px = def.tileX * TILE_SIZE + TILE_SIZE / 2
     const py = def.tileY * TILE_SIZE + TILE_SIZE / 2
 
-    super(scene, px, py, `npc-${def.id}`)
+    super(scene, px, py, `npc-${def.id}-down`)
     this.agentDef = def
 
     this.homeX = px
@@ -80,14 +104,10 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.setOffset(6, 10)
 
     this.npcState = 'idle'
-
-    // Roaming behavior
     this.idleBehavior = new IdleBehavior(scene, this)
 
-    // Status bubble
     this.statusBubble = new StatusBubble(scene, px, py)
 
-    // Name label
     this.nameLabel = scene.add.text(px, py + TILE_SIZE / 2 + 4, def.name, {
       fontFamily: '"Press Start 2P"',
       fontSize: '8px',
@@ -96,7 +116,6 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
       strokeThickness: 2,
     }).setOrigin(0.5, 0)
 
-    // "Oi" balloon (hidden by default)
     this.oiBalloonBg = scene.add.rectangle(px, py - 38, 36, 18, 0xffffff, 0.9)
       .setStrokeStyle(2, 0x000000)
       .setVisible(false)
@@ -107,6 +126,27 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
       color: '#000000',
     }).setOrigin(0.5, 0.5).setVisible(false).setDepth(151)
   }
+
+  // ========== DIRECTION ==========
+
+  private faceDirection(targetX: number, targetY: number): void {
+    const dx = targetX - this.x
+    const dy = targetY - this.y
+    let dir: string
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      dir = dx > 0 ? 'right' : 'left'
+    } else {
+      dir = dy > 0 ? 'down' : 'up'
+    }
+
+    if (dir !== this.currentDir) {
+      this.currentDir = dir
+      this.setTexture(`npc-${this.agentDef.id}-${dir}`)
+    }
+  }
+
+  // ========== ATTACHMENTS ==========
 
   private updateAttachments(): void {
     this.statusBubble.setPosition(this.x, this.y - 24)
@@ -119,21 +159,12 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.updateAttachments()
   }
 
-  stopIdleBob(): void {
-    // no-op: idle is now static
-  }
-
-  restartIdleBob(): void {
-    // no-op
-  }
+  stopIdleBob(): void { /* no-op */ }
+  restartIdleBob(): void { /* no-op */ }
 
   // ========== PATH WALKING ==========
 
-  private walkPath(
-    targetTileX: number,
-    targetTileY: number,
-    onComplete: () => void
-  ): void {
+  private walkPath(targetTileX: number, targetTileY: number, onComplete: () => void): void {
     const from = pixelToTile(this.x, this.y, TILE_SIZE)
     const path = findPath(from.x, from.y, targetTileX, targetTileY)
 
@@ -157,6 +188,12 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
 
     const nextTile = this.pathQueue.shift()!
     const target = tileToPixel(nextTile.x, nextTile.y, TILE_SIZE)
+
+    // Face the direction we're moving
+    this.faceDirection(target.x, target.y)
+
+    // Emit door event if this tile is a door
+    this.scene.game.events.emit('npc-on-tile', nextTile.x, nextTile.y)
 
     this.currentPathTween = this.scene.tweens.add({
       targets: this,
@@ -205,6 +242,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     const homeTile = pixelToTile(this.homeX, this.homeY, TILE_SIZE)
     this.walkPath(homeTile.x, homeTile.y, () => {
       this.npcState = 'idle'
+      this.faceDirection(this.x, this.y + 1) // face down when home
       this.updateAttachments()
     })
   }
@@ -214,13 +252,12 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.stopTyping()
     this.npcState = 'walking-to-agent'
 
-    // Walk to tile next to target NPC
     const targetTile = pixelToTile(targetNpc.homeX, targetNpc.homeY, TILE_SIZE)
-    // Try to stand next to them (right side)
     const adjacentTile = { x: targetTile.x + 1, y: targetTile.y }
 
     this.walkPath(adjacentTile.x, adjacentTile.y, () => {
       this.npcState = 'visiting'
+      this.faceDirection(targetNpc.x, targetNpc.y)
       this.updateAttachments()
       onArrive()
     })
@@ -250,11 +287,8 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   onPlayerNear(): void {
     if (this.playerNearby) return
     this.playerNearby = true
-
-    // Pause roaming
     this.idleBehavior?.pauseForPlayer()
 
-    // Show "Oi!" balloon
     this.oiBalloonBg?.setVisible(true).setAlpha(0)
     this.oiBalloonText?.setVisible(true).setAlpha(0)
     this.scene.tweens.add({
@@ -269,7 +303,6 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     if (!this.playerNearby) return
     this.playerNearby = false
 
-    // Hide "Oi!" balloon
     this.scene.tweens.add({
       targets: [this.oiBalloonBg, this.oiBalloonText],
       alpha: 0,
@@ -280,8 +313,6 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
         this.oiBalloonText?.setVisible(false)
       },
     })
-
-    // Resume roaming
     this.idleBehavior?.resumeFromPlayer()
   }
 
