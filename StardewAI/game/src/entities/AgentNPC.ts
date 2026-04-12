@@ -3,7 +3,7 @@ import { AgentDefinition, AgentStatus } from '../types'
 import { TILE_SIZE } from '../config'
 import { StatusBubble } from '../ui/StatusBubble'
 import { IdleBehavior } from '../systems/IdleBehavior'
-import { findPath, pixelToTile, tileToPixel, registerOccupied, unregisterOccupied } from '../systems/Pathfinder'
+import { findPath, pixelToTile, tileToPixel, registerOccupied, unregisterOccupied, isTileOccupied } from '../systems/Pathfinder'
 
 // Generate 4 directional textures per NPC (like Player)
 export function generateNPCTexture(scene: Phaser.Scene, id: string, color: number): void {
@@ -345,17 +345,40 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.npcState = 'walking-to-player'
 
     const playerTile = pixelToTile(playerX, playerY, TILE_SIZE)
-    // Walk to tile adjacent to player
     const from = pixelToTile(this.x, this.y, TILE_SIZE)
-    const path = findPath(from.x, from.y, playerTile.x, playerTile.y, this.agentDef.id)
+
+    // Find a free tile adjacent to player (queue/line up if others are already there)
+    const adjacentOffsets = [
+      { x: 0, y: 1 },  // below
+      { x: 1, y: 0 },  // right
+      { x: -1, y: 0 }, // left
+      { x: 0, y: -1 }, // above
+      { x: 1, y: 1 },  // diagonal fallbacks
+      { x: -1, y: 1 },
+      { x: 1, y: -1 },
+      { x: -1, y: -1 },
+      { x: 0, y: 2 },  // further away (queue)
+      { x: 0, y: -2 },
+      { x: 2, y: 0 },
+      { x: -2, y: 0 },
+    ]
+
+    let targetTile = { x: playerTile.x, y: playerTile.y + 1 } // default: below player
+    for (const off of adjacentOffsets) {
+      const tx = playerTile.x + off.x
+      const ty = playerTile.y + off.y
+      if (!isTileOccupied(tx, ty, this.agentDef.id)) {
+        targetTile = { x: tx, y: ty }
+        break
+      }
+    }
+
+    const path = findPath(from.x, from.y, targetTile.x, targetTile.y, this.agentDef.id)
 
     if (path.length === 0) {
       this.showDoneBalloon()
       return
     }
-
-    // Remove last step so we stop next to (not on top of) the player
-    if (path.length > 1) path.pop()
 
     this.pathQueue = path
     this.pathCallback = () => {

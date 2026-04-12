@@ -39,11 +39,11 @@ export const MAP_DATA: number[][] = [
   // Row 13
   [T,G,G,T,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,D,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T,G,G,T],
   // Row 14 - Center of map (player spawn area)
-  [T,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,D,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
-  // Row 15
-  [T,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,D,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
+  [T,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,D,D,D,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
+  // Row 15 - Campfire at (19,15)
+  [T,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,D,D,D,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
   // Row 16
-  [T,G,G,G,G,G,G,G,G,G,G,G,G,G,F,G,G,G,G,D,G,G,G,G,F,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
+  [T,G,G,G,G,G,G,G,G,G,G,G,G,G,F,G,G,G,D,D,D,G,G,G,F,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
   // Row 17
   [T,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,D,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,G,T],
   // Row 18

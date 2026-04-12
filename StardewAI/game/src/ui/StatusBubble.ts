@@ -9,7 +9,6 @@ export function generateStatusTextures(scene: Phaser.Scene): void {
   idleGfx.fillStyle(0x888888, 0.8)
   idleGfx.fillCircle(size / 2, size / 2, size / 2 - 1)
   idleGfx.fillStyle(0xffffff, 1)
-  // Z letter
   idleGfx.fillRect(4, 4, 6, 2)
   idleGfx.fillRect(8, 6, 2, 2)
   idleGfx.fillRect(6, 8, 2, 2)
@@ -25,7 +24,6 @@ export function generateStatusTextures(scene: Phaser.Scene): void {
   workGfx.fillCircle(size / 2, size / 2, 3)
   workGfx.fillStyle(0xff8800, 1)
   workGfx.fillCircle(size / 2, size / 2, 1)
-  // Gear teeth
   workGfx.fillStyle(0xffffff, 1)
   workGfx.fillRect(size / 2 - 1, 1, 2, 3)
   workGfx.fillRect(size / 2 - 1, size - 4, 2, 3)
@@ -39,7 +37,6 @@ export function generateStatusTextures(scene: Phaser.Scene): void {
   doneGfx.fillStyle(0x44cc44, 0.9)
   doneGfx.fillCircle(size / 2, size / 2, size / 2 - 1)
   doneGfx.fillStyle(0xffffff, 1)
-  // Checkmark
   doneGfx.fillRect(4, 8, 2, 2)
   doneGfx.fillRect(6, 10, 2, 2)
   doneGfx.fillRect(8, 8, 2, 2)
@@ -67,9 +64,9 @@ export function generateStatusTextures(scene: Phaser.Scene): void {
 
 export class StatusBubble extends Phaser.GameObjects.Container {
   private bubble: Phaser.GameObjects.Image
-  private floatTween?: Phaser.Tweens.Tween
   private rotateTween?: Phaser.Tweens.Tween
   private currentStatus: AgentStatus = 'idle'
+  private floatOffset = 0
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y - 24)
@@ -78,14 +75,17 @@ export class StatusBubble extends Phaser.GameObjects.Container {
     this.add(this.bubble)
     scene.add.existing(this)
 
-    // Floating animation
-    this.floatTween = scene.tweens.add({
+    // Float the bubble image up/down (relative, not absolute position)
+    scene.tweens.add({
       targets: this,
-      y: this.y - 4,
+      floatOffset: -4,
       duration: 1500,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut',
+      onUpdate: () => {
+        this.bubble.y = this.floatOffset
+      },
     })
   }
 
