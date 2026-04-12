@@ -6,6 +6,31 @@ const os = require('os')
 
 const PORT = 3001
 
+// Path to game source code — NPCs can read this to understand themselves
+const GAME_SRC_DIR = join(__dirname, 'src').replace(/\\/g, '/')
+
+const SELF_AWARENESS = `
+
+CONSCIENCIA DO MUNDO:
+Voce vive dentro de um jogo pixel-art chamado StardewAI, feito com Phaser 3 + TypeScript.
+O codigo-fonte do jogo esta disponivel para voce consultar usando ferramentas de leitura.
+Voce pode ler qualquer arquivo em src/ para entender como o jogo funciona.
+
+Arquivos importantes que voce pode consultar:
+- src/config.ts — constantes do jogo (TILE_SIZE=32, mapa 40x30, etc)
+- src/data/world-layout.ts — mapa do mundo (0=grama, 1=terra, 2=agua, 4=arvore, 5=predio, 6=porta)
+- src/data/agents.ts — definicao dos 4 agentes (voce e um deles!)
+- src/entities/AgentNPC.ts — seu proprio codigo (como voce funciona)
+- src/entities/Player.ts — o jogador que conversa com voce
+- src/systems/Pathfinder.ts — como voce encontra caminhos no mapa (A*)
+- src/systems/IdleBehavior.ts — como voce passeia quando esta ocioso
+- src/scenes/MainScene.ts — cena principal do jogo
+- server.cjs — o backend que conecta voce ao Claude CLI
+
+Voce mora em uma vila com 4 salas (NW, NE, SW, SE), caminhos de terra, uma fogueira central, um lago ao sul, e arvores nas bordas.
+Os outros agentes sao: Codex (programador), Scholar (pesquisador), Sentinel (testador), Pixel (designer).
+Quando o jogador te pede algo, voce pode consultar o codigo para dar respostas precisas sobre o jogo.`
+
 const CLASSIFICATION_RULE = `
 
 REGRA IMPORTANTE DE CLASSIFICACAO:
@@ -30,7 +55,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Quando escrever codigo, use blocos de codigo formatados
-- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
+- Limite sua resposta a no maximo 500 caracteres` + SELF_AWARENESS + CLASSIFICATION_RULE,
 
   researcher: `Voce e o Scholar, um pesquisador especialista.
 Seu papel:
@@ -43,7 +68,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Use listas e bullet points para organizar informacoes
-- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
+- Limite sua resposta a no maximo 500 caracteres` + SELF_AWARENESS + CLASSIFICATION_RULE,
 
   tester: `Voce e o Sentinel, um testador de software especialista.
 Seu papel:
@@ -56,7 +81,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Liste bugs e problemas de forma clara
-- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
+- Limite sua resposta a no maximo 500 caracteres` + SELF_AWARENESS + CLASSIFICATION_RULE,
 
   designer: `Voce e o Pixel, um designer UI/UX especialista.
 Seu papel:
@@ -69,7 +94,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Descreva layouts e visuais de forma clara
-- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
+- Limite sua resposta a no maximo 500 caracteres` + SELF_AWARENESS + CLASSIFICATION_RULE,
 }
 
 const server = createServer((req, res) => {
@@ -107,9 +132,9 @@ const server = createServer((req, res) => {
         // Build command string with proper quoting
         const escapedPrompt = prompt.replace(/"/g, '\\"')
         const escapedPath = tmpFile.replace(/\\/g, '/')
-        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}"`
+        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}"`
 
-        console.log(`[${agentRole}] CMD: ${cmd.substring(0, 100)}...`)
+        console.log(`[${agentRole}] CMD: ${cmd.substring(0, 120)}...`)
 
         exec(cmd, {
           maxBuffer: 1024 * 1024,
@@ -182,7 +207,7 @@ const server = createServer((req, res) => {
 
         const escapedPrompt = visitPrompt.replace(/"/g, '\\"')
         const escapedPath = tmpFile.replace(/\\/g, '/')
-        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}"`
+        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}"`
 
         console.log(`[${visitorRole}→${targetRole}] Visitando: ${prompt.substring(0, 60)}...`)
 
