@@ -130,10 +130,38 @@ export class DialogPanel extends Phaser.GameObjects.Container {
       this.statusText.setText('Status: Disponivel')
       this.statusText.setColor('#88ff88')
       this.resultText.setText('')
-      this.actionText.setText('[ Delegar ] (SPACE)')
+      this.actionText.setText('[ Falar / Delegar ] (SPACE)')
       this.visitText.setText('[ Enviar p/ Agente ] (V)')
     }
 
+    this.setVisible(true)
+  }
+
+  showThinking(agent: AgentDefinition): void {
+    this.currentAgent = agent
+    this.nameText.setText(agent.name)
+    this.roleText.setText(ROLE_LABELS[agent.role] || agent.role)
+    this.roleText.setColor(ROLE_COLORS[agent.role] || '#888888')
+    this.descText.setText(agent.description)
+    this.statusText.setText('Pensando...')
+    this.statusText.setColor('#ffcc00')
+    this.resultText.setText('')
+    this.actionText.setText('')
+    this.visitText.setText('')
+    this.setVisible(true)
+  }
+
+  showChatResponse(agent: AgentDefinition, message: string): void {
+    this.currentAgent = agent
+    this.nameText.setText(agent.name)
+    this.roleText.setText(ROLE_LABELS[agent.role] || agent.role)
+    this.roleText.setColor(ROLE_COLORS[agent.role] || '#888888')
+    this.descText.setText('')
+    this.statusText.setText('')
+    const truncated = message.length > 400 ? message.substring(0, 400) + '...' : message
+    this.resultText.setText(truncated)
+    this.actionText.setText('[ OK ] (ESC)')
+    this.visitText.setText('[ Falar mais ] (SPACE)')
     this.setVisible(true)
   }
 
@@ -153,7 +181,7 @@ export class DialogPanel extends Phaser.GameObjects.Container {
   }
 
   private handleAction(): void {
-    if (this.actionText.text.includes('Delegar')) {
+    if (this.actionText.text.includes('Delegar') || this.actionText.text.includes('Falar')) {
       this.onAssignTask?.()
     } else if (this.actionText.text.includes('Dispensar')) {
       this.onDismissTask?.()
@@ -161,7 +189,7 @@ export class DialogPanel extends Phaser.GameObjects.Container {
   }
 
   handleKeyAction(key: string): void {
-    if (key === 'SPACE' && this.actionText.text.includes('Delegar')) {
+    if (key === 'SPACE' && (this.actionText.text.includes('Delegar') || this.visitText.text.includes('Falar'))) {
       this.onAssignTask?.()
     } else if (key === 'D' && this.actionText.text.includes('Dispensar')) {
       this.onDismissTask?.()

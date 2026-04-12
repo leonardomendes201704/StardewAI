@@ -90,6 +90,24 @@ export class UIScene extends Phaser.Scene {
         this.dialogPanel.show(currentAgent, task)
       }
     })
+
+    // Agent is thinking (brief loading state)
+    this.game.events.on('agent-thinking', (agentId: string) => {
+      const agent = AGENTS.find(a => a.id === agentId)
+      if (agent) {
+        this.dialogPanel.showThinking(agent)
+        this.dialogPanel.setVisible(true)
+        this.game.events.emit('dialog-opened')
+      }
+    })
+
+    // Agent chat response (no desk walk, inline reply)
+    this.game.events.on('agent-chat-response', (agentId: string, message: string) => {
+      const agent = AGENTS.find(a => a.id === agentId)
+      if (agent) {
+        this.dialogPanel.showChatResponse(agent, message)
+      }
+    })
   }
 
   update(time: number, delta: number): void {
@@ -134,7 +152,8 @@ export class UIScene extends Phaser.Scene {
     this.taskDelegationUI.show(
       agent,
       (prompt: string) => {
-        this.taskManager.assignTask(agent.id, agent.role, prompt)
+        // Send message — backend decides if it's chat or task
+        this.taskManager.sendMessage(agent.id, agent.role, prompt)
         this.closeDialog()
       },
       () => {}

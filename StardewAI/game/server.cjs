@@ -6,6 +6,18 @@ const os = require('os')
 
 const PORT = 3001
 
+const CLASSIFICATION_RULE = `
+
+REGRA IMPORTANTE DE CLASSIFICACAO:
+Voce DEVE classificar cada mensagem do usuario como CONVERSA ou TAREFA.
+- CONVERSA: perguntas casuais, cumprimentos, pedidos de explicacao, bate-papo geral. Exemplos: "oi", "o que voce faz?", "me explica o que e React", "tudo bem?"
+- TAREFA: pedidos que exigem trabalho real, como criar codigo, testar algo, fazer design, pesquisar a fundo. Exemplos: "crie uma funcao", "teste o login", "faca um layout", "pesquise sobre X e documente"
+
+FORMATO DA RESPOSTA:
+- Se for CONVERSA, comece sua resposta EXATAMENTE com [CHAT] na primeira linha, depois responda normalmente.
+- Se for TAREFA, comece sua resposta EXATAMENTE com [TASK] na primeira linha, depois execute a tarefa.
+- NUNCA omita o prefixo [CHAT] ou [TASK].`
+
 const AGENT_PERSONAS = {
   coder: `Voce e o Codex, um programador especialista.
 Seu papel:
@@ -18,7 +30,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Quando escrever codigo, use blocos de codigo formatados
-- Limite sua resposta a no maximo 500 caracteres`,
+- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
 
   researcher: `Voce e o Scholar, um pesquisador especialista.
 Seu papel:
@@ -31,7 +43,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Use listas e bullet points para organizar informacoes
-- Limite sua resposta a no maximo 500 caracteres`,
+- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
 
   tester: `Voce e o Sentinel, um testador de software especialista.
 Seu papel:
@@ -44,7 +56,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Liste bugs e problemas de forma clara
-- Limite sua resposta a no maximo 500 caracteres`,
+- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
 
   designer: `Voce e o Pixel, um designer UI/UX especialista.
 Seu papel:
@@ -57,7 +69,7 @@ Regras:
 - Responda SEMPRE em portugues brasileiro
 - Seja direto e objetivo
 - Descreva layouts e visuais de forma clara
-- Limite sua resposta a no maximo 500 caracteres`,
+- Limite sua resposta a no maximo 500 caracteres` + CLASSIFICATION_RULE,
 }
 
 const server = createServer((req, res) => {
@@ -117,11 +129,21 @@ const server = createServer((req, res) => {
             return
           }
 
-          const result = stdout.trim()
-          if (result) {
-            console.log(`[${agentRole}] Concluido (${result.length} chars)`)
+          const raw = stdout.trim()
+          if (raw) {
+            // Parse [CHAT] or [TASK] prefix
+            let type = 'task'
+            let result = raw
+            if (raw.startsWith('[CHAT]')) {
+              type = 'chat'
+              result = raw.substring(6).trim()
+            } else if (raw.startsWith('[TASK]')) {
+              type = 'task'
+              result = raw.substring(6).trim()
+            }
+            console.log(`[${agentRole}] ${type.toUpperCase()} (${result.length} chars)`)
             res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ result }))
+            res.end(JSON.stringify({ result, type }))
           } else {
             console.error(`[${agentRole}] Sem output. stderr: ${stderr}`)
             res.writeHead(500, { 'Content-Type': 'application/json' })
