@@ -69,6 +69,7 @@ export class IdleBehavior {
 
     this.walkAlongPath(path, () => {
       this.state = 'resting'
+      this.npc.faceDirection(this.npc.x, this.npc.y + 1) // face down
       this.startRestAnimation()
       const restDuration = 5000 + Math.random() * 10000
       this.timer = setTimeout(() => {
@@ -94,6 +95,7 @@ export class IdleBehavior {
 
     this.walkAlongPath(path, () => {
       this.state = 'home'
+      this.npc.faceDirection(this.npc.x, this.npc.y + 1) // face down
       this.npc.updateAttachmentsPublic()
       this.scheduleNextDecision(4000 + Math.random() * 6000)
     })
@@ -122,6 +124,9 @@ export class IdleBehavior {
 
     // Face the direction of movement
     this.npc.faceDirection(target.x, target.y)
+
+    // Emit tile event for door opening
+    this.scene.game.events.emit('npc-on-tile', nextTile.x, nextTile.y)
 
     this.currentTween = this.scene.tweens.add({
       targets: this.npc,
