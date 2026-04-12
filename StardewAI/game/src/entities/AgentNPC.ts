@@ -56,7 +56,7 @@ function darken(color: number): number {
   return (r << 16) | (g << 8) | b
 }
 
-type NPCState = 'idle' | 'walking-to-desk' | 'working' | 'walking-home' | 'walking-to-agent' | 'visiting'
+type NPCState = 'idle' | 'walking-to-desk' | 'working' | 'walking-home' | 'walking-to-agent' | 'visiting' | 'walking-to-player' | 'reporting'
 
 export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   public agentDef: AgentDefinition
@@ -248,7 +248,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   }
 
   walkHome(): void {
-    if (this.npcState === 'idle' || this.npcState === 'walking-home') return
+    if (this.npcState === 'walking-home') return
     this.stopPathWalking()
     this.stopTyping()
     this.npcState = 'walking-home'
@@ -301,6 +301,10 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   onPlayerNear(): void {
     if (this.playerNearby) return
     this.playerNearby = true
+
+    // Don't interrupt if NPC is reporting task completion
+    if (this.npcState === 'reporting' || this.npcState === 'walking-to-player') return
+
     this.idleBehavior?.pauseForPlayer()
 
     this.oiBalloonBg?.setVisible(true).setAlpha(0)
@@ -317,6 +321,9 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     if (!this.playerNearby) return
     this.playerNearby = false
 
+    // Don't hide balloon if NPC is reporting task completion
+    if (this.npcState === 'reporting' || this.npcState === 'walking-to-player') return
+
     this.scene.tweens.add({
       targets: [this.oiBalloonBg, this.oiBalloonText],
       alpha: 0,
@@ -330,6 +337,60 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.idleBehavior?.resumeFromPlayer()
   }
 
+  // ========== WALK TO PLAYER ==========
+
+  walkToPlayer(playerX: number, playerY: number): void {
+    this.stopPathWalking()
+    this.stopTyping()
+    this.npcState = 'walking-to-player'
+
+    const playerTile = pixelToTile(playerX, playerY, TILE_SIZE)
+    // Walk to tile adjacent to player
+    const from = pixelToTile(this.x, this.y, TILE_SIZE)
+    const path = findPath(from.x, from.y, playerTile.x, playerTile.y, this.agentDef.id)
+
+    if (path.length === 0) {
+      this.showDoneBalloon()
+      return
+    }
+
+    // Remove last step so we stop next to (not on top of) the player
+    if (path.length > 1) path.pop()
+
+    this.pathQueue = path
+    this.pathCallback = () => {
+      this.npcState = 'reporting'
+      this.faceDirection(playerX, playerY)
+      this.updateAttachments()
+      this.showDoneBalloon()
+    }
+    this.walkNextPathStep()
+  }
+
+  private showDoneBalloon(): void {
+    if (this.oiBalloonText && this.oiBalloonBg) {
+      this.oiBalloonText.setText('Terminei!')
+      this.oiBalloonBg.setSize(72, 18)
+      this.oiBalloonBg.setVisible(true).setAlpha(0)
+      this.oiBalloonText.setVisible(true).setAlpha(0)
+      this.scene.tweens.add({
+        targets: [this.oiBalloonBg, this.oiBalloonText],
+        alpha: 1,
+        duration: 300,
+        ease: 'Power2',
+      })
+    }
+  }
+
+  hideDoneBalloon(): void {
+    if (this.oiBalloonText && this.oiBalloonBg) {
+      this.oiBalloonBg.setVisible(false)
+      this.oiBalloonText.setVisible(false)
+      this.oiBalloonText.setText('Oi!')
+      this.oiBalloonBg.setSize(36, 18)
+    }
+  }
+
   // ========== STATUS ==========
 
   setAgentStatus(status: AgentStatus): void {
@@ -337,18 +398,17 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
 
     if (status === 'working') {
       this.idleBehavior?.pause()
+      this.hideDoneBalloon()
       this.walkToDesk()
     } else if (status === 'done' || status === 'error') {
-      if (this.npcState !== 'idle' && this.npcState !== 'walking-home') {
-        this.walkHome()
-      }
+      // Walk to player to report completion
+      this.scene.game.events.emit('npc-task-done-find-player', this.agentDef.id)
     } else if (status === 'idle') {
-      if (this.npcState !== 'idle' && this.npcState !== 'walking-home') {
-        this.walkHome()
-      }
+      this.hideDoneBalloon()
+      this.walkHome()
       window.setTimeout(() => {
         this.idleBehavior?.resume()
-      }, 1500)
+      }, 3000)
     }
   }
 

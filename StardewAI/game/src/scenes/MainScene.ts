@@ -7,6 +7,7 @@ import { AGENTS } from '../data/agents'
 import { MAP_DATA } from '../data/world-layout'
 import { TILE_SIZE, MAP_WIDTH, MAP_HEIGHT } from '../config'
 import { AgentStatus } from '../types'
+import { addBlockedTile, pixelToTile } from '../systems/Pathfinder'
 
 // Door tile index in MAP_DATA
 const DOOR_TILE = 6
@@ -56,9 +57,10 @@ export class MainScene extends Phaser.Scene {
       }
     }
 
-    // Create campfire
+    // Create campfire (blocked tile for pathfinding)
     const campfireX = 19 * TILE_SIZE + TILE_SIZE / 2
     const campfireY = 15 * TILE_SIZE + TILE_SIZE / 2
+    addBlockedTile(19, 15)
     const campfire = this.add.image(campfireX, campfireY, 'campfire').setDepth(0)
     this.tweens.add({
       targets: campfire,
@@ -102,6 +104,14 @@ export class MainScene extends Phaser.Scene {
     this.game.events.on('task-status-changed', (agentId: string, status: AgentStatus) => {
       const npc = this.npcs.find(n => n.agentDef.id === agentId)
       if (npc) npc.setAgentStatus(status)
+    })
+
+    // NPC finished task — walk to player
+    this.game.events.on('npc-task-done-find-player', (agentId: string) => {
+      const npc = this.npcs.find(n => n.agentDef.id === agentId)
+      if (npc) {
+        npc.walkToPlayer(this.player.x, this.player.y)
+      }
     })
 
     // Dialog movement lock

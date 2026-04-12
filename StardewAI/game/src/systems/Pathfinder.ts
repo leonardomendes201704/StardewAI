@@ -12,6 +12,13 @@ const TILE_COSTS: Record<number, number> = {
   6: 1,   // DOOR - walkable (NPCs use doors)
 }
 
+// Static blocked tiles (campfire, etc.)
+const blockedExtras = new Set<string>()
+
+export function addBlockedTile(x: number, y: number): void {
+  blockedExtras.add(`${x},${y}`)
+}
+
 // Occupied tiles registry — NPCs register where they are
 const occupiedTiles = new Map<string, string>() // key "x,y" → npcId
 
@@ -49,6 +56,7 @@ function heuristic(ax: number, ay: number, bx: number, by: number): number {
 
 function isWalkable(x: number, y: number): boolean {
   if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) return false
+  if (blockedExtras.has(`${x},${y}`)) return false
   const tile = MAP_DATA[y][x]
   return TILE_COSTS[tile] > 0
 }
