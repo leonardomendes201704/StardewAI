@@ -120,6 +120,9 @@ export class IdleBehavior {
     const nextTile = this.pathQueue.shift()!
     const target = tileToPixel(nextTile.x, nextTile.y, TILE_SIZE)
 
+    // Face the direction of movement
+    this.npc.faceDirection(target.x, target.y)
+
     this.currentTween = this.scene.tweens.add({
       targets: this.npc,
       x: target.x,

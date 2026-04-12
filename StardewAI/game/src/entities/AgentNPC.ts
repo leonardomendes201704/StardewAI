@@ -137,7 +137,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
 
   // ========== DIRECTION ==========
 
-  private faceDirection(targetX: number, targetY: number): void {
+  faceDirection(targetX: number, targetY: number): void {
     const dx = targetX - this.x
     const dy = targetY - this.y
     let dir: string
