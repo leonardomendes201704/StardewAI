@@ -40,6 +40,21 @@ export class MainScene extends Phaser.Scene {
       this.add.image(deskX, deskY, 'desk').setDepth(0)
     }
 
+    // Create campfire in the center of the village
+    const campfireX = 19 * TILE_SIZE + TILE_SIZE / 2
+    const campfireY = 15 * TILE_SIZE + TILE_SIZE / 2
+    const campfire = this.add.image(campfireX, campfireY, 'campfire').setDepth(0)
+    // Animate campfire flames (pulsing scale)
+    this.tweens.add({
+      targets: campfire,
+      scaleX: 1.1,
+      scaleY: 1.15,
+      duration: 400,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    })
+
     // Create NPCs
     for (const agentDef of AGENTS) {
       const npc = new AgentNPC(this, agentDef)

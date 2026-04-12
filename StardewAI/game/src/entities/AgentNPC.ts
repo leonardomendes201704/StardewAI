@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { AgentDefinition, AgentStatus } from '../types'
 import { TILE_SIZE } from '../config'
 import { StatusBubble } from '../ui/StatusBubble'
+import { IdleBehavior } from '../systems/IdleBehavior'
 
 export function generateNPCTexture(scene: Phaser.Scene, id: string, color: number): void {
   const gfx = scene.add.graphics()
@@ -60,6 +61,7 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   private npcState: NPCState = 'idle'
   private idleTween: Phaser.Tweens.Tween | null = null
   private typingTween: Phaser.Tweens.Tween | null = null
+  private idleBehavior: IdleBehavior | null = null
 
   constructor(scene: Phaser.Scene, def: AgentDefinition) {
     const px = def.tileX * TILE_SIZE + TILE_SIZE / 2
@@ -85,6 +87,9 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     // Start idle animation
     this.startIdle()
 
+    // Start autonomous roaming behavior
+    this.idleBehavior = new IdleBehavior(scene, this)
+
     // Status bubble
     this.statusBubble = new StatusBubble(scene, px, py)
 
@@ -101,14 +106,8 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   private startIdle(): void {
     this.stopAllTweens()
     this.npcState = 'idle'
-    this.idleTween = this.scene.tweens.add({
-      targets: this,
-      y: this.homeY - 2,
-      duration: 1200,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    })
+    // No idle tween here — IdleBehavior handles all movement
+    // Just ensure NPC is at home position
   }
 
   private startTyping(): void {
@@ -138,6 +137,22 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   private updateAttachments(): void {
     this.statusBubble.setPosition(this.x, this.y - 24)
     this.nameLabel.setPosition(this.x, this.y + TILE_SIZE / 2 + 4)
+  }
+
+  /** Public version for IdleBehavior to call */
+  updateAttachmentsPublic(): void {
+    this.updateAttachments()
+  }
+
+  /** Stop any NPC tweens so IdleBehavior can move freely */
+  stopIdleBob(): void {
+    this.stopAllTweens()
+  }
+
+  /** Called when NPC returns home from roaming */
+  restartIdleBob(): void {
+    // Nothing to restart — idle is now a static state
+    // IdleBehavior handles the roaming cycle
   }
 
   walkToDesk(): void {
@@ -209,11 +224,23 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.statusBubble.setStatus(status)
 
     if (status === 'working') {
+      // Pause roaming and go to desk
+      this.idleBehavior?.pause()
       this.walkToDesk()
-    } else if (status === 'done' || status === 'error' || status === 'idle') {
+    } else if (status === 'done' || status === 'error') {
+      // Walk home but don't resume roaming yet (wait for dismiss)
       if (this.npcState !== 'idle' && this.npcState !== 'walking-home') {
         this.walkHome()
       }
+    } else if (status === 'idle') {
+      // Task dismissed - resume roaming
+      if (this.npcState !== 'idle' && this.npcState !== 'walking-home') {
+        this.walkHome()
+      }
+      // Resume autonomous behavior after getting home
+      window.setTimeout(() => {
+        this.idleBehavior?.resume()
+      }, 1500)
     }
   }
 

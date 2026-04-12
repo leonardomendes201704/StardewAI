@@ -48,6 +48,44 @@ function generateDeskTexture(scene: Phaser.Scene): void {
   gfx.destroy()
 }
 
+function generateCampfireTexture(scene: Phaser.Scene): void {
+  const gfx = scene.add.graphics()
+  const S = TILE_SIZE
+
+  // Stone ring
+  gfx.fillStyle(0x666666, 1)
+  gfx.fillRect(4, 22, 6, 4)
+  gfx.fillRect(22, 22, 6, 4)
+  gfx.fillRect(6, 26, 4, 3)
+  gfx.fillRect(22, 26, 4, 3)
+  gfx.fillRect(10, 27, 12, 3)
+  gfx.fillStyle(0x555555, 1)
+  gfx.fillRect(8, 24, 16, 4)
+
+  // Logs
+  gfx.fillStyle(0x6b4c2a, 1)
+  gfx.fillRect(10, 22, 12, 4)
+  gfx.fillStyle(0x5a3d1e, 1)
+  gfx.fillRect(12, 20, 8, 3)
+
+  // Flames - main orange
+  gfx.fillStyle(0xff6600, 1)
+  gfx.fillRect(12, 12, 8, 10)
+  // Yellow core
+  gfx.fillStyle(0xffcc00, 1)
+  gfx.fillRect(14, 14, 4, 6)
+  // Red tips
+  gfx.fillStyle(0xff3300, 1)
+  gfx.fillRect(11, 8, 3, 6)
+  gfx.fillRect(18, 9, 3, 5)
+  // White hot center
+  gfx.fillStyle(0xffeeaa, 1)
+  gfx.fillRect(15, 16, 2, 3)
+
+  gfx.generateTexture('campfire', S, S)
+  gfx.destroy()
+}
+
 export class BootScene extends Phaser.Scene {
   constructor() {
     super({ key: 'BootScene' })
@@ -83,6 +121,7 @@ export class BootScene extends Phaser.Scene {
 
     statusText.setText('Gerando mobilia...')
     generateDeskTexture(this)
+    generateCampfireTexture(this)
 
     statusText.setText('Gerando icones...')
     generateStatusTextures(this)
