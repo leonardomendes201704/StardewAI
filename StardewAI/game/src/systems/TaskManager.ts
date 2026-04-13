@@ -83,10 +83,18 @@ export class TaskManager {
       const data = await response.json()
 
       if (response.ok && data.result) {
-        this.scene.game.events.emit('task-status-changed', agentId, 'idle' as AgentStatus)
-        this.scene.game.events.emit('agent-chat-response', agentId,
-          'EVOLUCAO APLICADA!\n\n' + data.result + '\n\nRecarregando em 5s...')
-        window.setTimeout(() => { window.location.reload() }, 5000)
+        // NPC walks to player and reports the evolution result
+        const task: Task = {
+          id: `evolve-${Date.now()}`,
+          agentId,
+          prompt,
+          status: 'done',
+          result: 'EVOLUCAO APLICADA!\n\n' + data.result,
+          startedAt: Date.now(),
+          completedAt: Date.now(),
+        }
+        this.tasks.set(agentId, task)
+        this.scene.game.events.emit('task-status-changed', agentId, 'done' as AgentStatus)
       } else {
         this.scene.game.events.emit('task-status-changed', agentId, 'idle' as AgentStatus)
         this.scene.game.events.emit('agent-chat-response', agentId,
