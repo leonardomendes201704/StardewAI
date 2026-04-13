@@ -31,6 +31,7 @@ export class DialogPanel extends Phaser.GameObjects.Container {
   private onAssignTask: (() => void) | null = null
   private onDismissTask: (() => void) | null = null
   private onVisitAgent: (() => void) | null = null
+  private onAcceptEvolve: (() => void) | null = null
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0)
@@ -165,6 +166,21 @@ export class DialogPanel extends Phaser.GameObjects.Container {
     this.setVisible(true)
   }
 
+  showEvolveProposal(agent: AgentDefinition, proposal: string): void {
+    this.currentAgent = agent
+    this.nameText.setText(agent.name)
+    this.roleText.setText('EVOLUCAO')
+    this.roleText.setColor('#ff8800')
+    this.descText.setText('')
+    this.statusText.setText('Quer que eu modifique o jogo?')
+    this.statusText.setColor('#ffcc00')
+    const truncated = proposal.length > 350 ? proposal.substring(0, 350) + '...' : proposal
+    this.resultText.setText(truncated)
+    this.actionText.setText('[ Aceitar ] (SPACE)')
+    this.visitText.setText('[ Dispensar ] (ESC)')
+    this.setVisible(true)
+  }
+
   hide(): void {
     this.setVisible(false)
     this.currentAgent = null
@@ -174,14 +190,17 @@ export class DialogPanel extends Phaser.GameObjects.Container {
     return this.visible
   }
 
-  setCallbacks(onAssign: () => void, onDismiss: () => void, onVisit: () => void): void {
+  setCallbacks(onAssign: () => void, onDismiss: () => void, onVisit: () => void, onEvolve?: () => void): void {
     this.onAssignTask = onAssign
     this.onDismissTask = onDismiss
     this.onVisitAgent = onVisit
+    this.onAcceptEvolve = onEvolve || null
   }
 
   private handleAction(): void {
-    if (this.actionText.text.includes('Delegar') || this.actionText.text.includes('Falar')) {
+    if (this.actionText.text.includes('Aceitar')) {
+      this.onAcceptEvolve?.()
+    } else if (this.actionText.text.includes('Delegar') || this.actionText.text.includes('Falar')) {
       this.onAssignTask?.()
     } else if (this.actionText.text.includes('Dispensar')) {
       this.onDismissTask?.()
@@ -189,7 +208,9 @@ export class DialogPanel extends Phaser.GameObjects.Container {
   }
 
   handleKeyAction(key: string): void {
-    if (key === 'SPACE' && (this.actionText.text.includes('Delegar') || this.visitText.text.includes('Falar'))) {
+    if (key === 'SPACE' && this.actionText.text.includes('Aceitar')) {
+      this.onAcceptEvolve?.()
+    } else if (key === 'SPACE' && (this.actionText.text.includes('Delegar') || this.visitText.text.includes('Falar'))) {
       this.onAssignTask?.()
     } else if (key === 'D' && this.actionText.text.includes('Dispensar')) {
       this.onDismissTask?.()

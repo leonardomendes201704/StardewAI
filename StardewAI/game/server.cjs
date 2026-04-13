@@ -139,7 +139,7 @@ const server = createServer((req, res) => {
         // Build command string with proper quoting
         const escapedPrompt = prompt.replace(/"/g, '\\"')
         const escapedPath = tmpFile.replace(/\\/g, '/')
-        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}" --allowedTools "Read,Grep,Glob,Edit,Write"`
+        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}"`
 
         console.log(`[${agentRole}] CMD: ${cmd.substring(0, 150)}...`)
 
@@ -245,6 +245,64 @@ const server = createServer((req, res) => {
             res.writeHead(500, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ error: 'No output', details: stderr }))
           }
+        })
+
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ error: 'Invalid JSON body' }))
+      }
+    })
+    return
+  }
+
+  // Evolve endpoint — executes with full write permissions after player approval
+  if (req.method === 'POST' && req.url === '/api/evolve-execute') {
+    let body = ''
+    req.on('data', (chunk) => { body += chunk })
+    req.on('end', () => {
+      try {
+        const { agentRole, prompt } = JSON.parse(body)
+        const persona = AGENT_PERSONAS[agentRole]
+        if (!persona) {
+          res.writeHead(400, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ error: `Unknown agent role: ${agentRole}` }))
+          return
+        }
+
+        const evolvePrompt = `O jogador APROVOU a modificacao. Agora EXECUTE a mudanca no codigo. Modifique os arquivos necessarios.\n\nPedido original: ${prompt}\n\nIMPORTANTE: Faca as mudancas usando Edit/Write. Depois descreva o que voce mudou comecando com [EVOLVE].`
+
+        const tmpFile = join(os.tmpdir(), `stardew-evolve-${agentRole}.txt`)
+        writeFileSync(tmpFile, persona, 'utf8')
+
+        const escapedPrompt = evolvePrompt.replace(/"/g, '\\"')
+        const escapedPath = tmpFile.replace(/\\/g, '/')
+        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}" --allowedTools "Read,Grep,Glob,Edit,Write" --dangerously-skip-permissions`
+
+        console.log(`[${agentRole}] EVOLVE EXECUTE: ${prompt.substring(0, 80)}...`)
+
+        exec(cmd, {
+          maxBuffer: 1024 * 1024 * 5,
+          timeout: 180000,
+          env: { ...process.env },
+        }, (err, stdout, stderr) => {
+          try { unlinkSync(tmpFile) } catch (_) {}
+
+          if (err) {
+            console.error(`[${agentRole}] Evolve error: ${err.message}`)
+            res.writeHead(500, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: 'Evolve failed', details: stderr || err.message }))
+            return
+          }
+
+          const raw = stdout.trim()
+          let result = raw
+          if (raw.startsWith('[EVOLVE]')) result = raw.substring(8).trim()
+          else if (raw.startsWith('[TASK]')) result = raw.substring(6).trim()
+          else if (raw.startsWith('[CHAT]')) result = raw.substring(6).trim()
+
+          console.log(`[${agentRole}] EVOLVED! (${result.length} chars)`)
+          res.writeHead(200, { 'Content-Type': 'application/json' })
+          res.end(JSON.stringify({ result, type: 'evolve' }))
         })
 
       } catch (err) {

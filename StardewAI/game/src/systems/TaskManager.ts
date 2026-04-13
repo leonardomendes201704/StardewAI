@@ -3,6 +3,7 @@ import { Task, AgentStatus } from '../types'
 
 const API_URL = 'http://localhost:3001/api/task'
 const VISIT_API_URL = 'http://localhost:3001/api/agent-visit'
+const EVOLVE_API_URL = 'http://localhost:3001/api/evolve-execute'
 
 export class TaskManager {
   private scene: Phaser.Scene
@@ -38,13 +39,8 @@ export class TaskManager {
           // Chat response — show inline, NPC stays put
           this.scene.game.events.emit('agent-chat-response', agentId, data.result)
         } else if (data.type === 'evolve') {
-          // NPC modified the game code! Show message then reload
-          this.scene.game.events.emit('agent-chat-response', agentId,
-            '🔧 EVOLUCAO! Modifiquei o codigo do jogo.\n\n' + data.result + '\n\nRecarregando em 5 segundos...')
-          // Auto-reload after showing the message
-          window.setTimeout(() => {
-            window.location.reload()
-          }, 5000)
+          // NPC wants to evolve — ask player permission
+          this.scene.game.events.emit('agent-evolve-proposal', agentId, agentRole, prompt, data.result)
         } else {
           // Task response — NPC goes to desk, works, then comes back
           const task: Task = {
@@ -68,6 +64,36 @@ export class TaskManager {
           `Erro: ${data.error || data.details || 'Falha desconhecida'}`)
       }
     } catch (err) {
+      this.scene.game.events.emit('agent-chat-response', agentId,
+        `Erro de conexao: ${err instanceof Error ? err.message : 'Backend offline?'}`)
+    }
+  }
+
+  /** Execute evolve after player approved */
+  async executeEvolve(agentId: string, agentRole: string, prompt: string): Promise<void> {
+    this.scene.game.events.emit('task-status-changed', agentId, 'working' as AgentStatus)
+
+    try {
+      const response = await fetch(EVOLVE_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentRole, prompt }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.result) {
+        this.scene.game.events.emit('task-status-changed', agentId, 'idle' as AgentStatus)
+        this.scene.game.events.emit('agent-chat-response', agentId,
+          'EVOLUCAO APLICADA!\n\n' + data.result + '\n\nRecarregando em 5s...')
+        window.setTimeout(() => { window.location.reload() }, 5000)
+      } else {
+        this.scene.game.events.emit('task-status-changed', agentId, 'idle' as AgentStatus)
+        this.scene.game.events.emit('agent-chat-response', agentId,
+          `Erro na evolucao: ${data.error || 'falha desconhecida'}`)
+      }
+    } catch (err) {
+      this.scene.game.events.emit('task-status-changed', agentId, 'idle' as AgentStatus)
       this.scene.game.events.emit('agent-chat-response', agentId,
         `Erro de conexao: ${err instanceof Error ? err.message : 'Backend offline?'}`)
     }

@@ -21,6 +21,7 @@ export class UIScene extends Phaser.Scene {
   private spaceKey!: Phaser.Input.Keyboard.Key
   private dKey!: Phaser.Input.Keyboard.Key
   private vKey!: Phaser.Input.Keyboard.Key
+  private pendingEvolve: { agentId: string; agentRole: string; prompt: string } | null = null
 
   constructor() {
     super({ key: 'UIScene' })
@@ -49,7 +50,8 @@ export class UIScene extends Phaser.Scene {
     this.dialogPanel.setCallbacks(
       () => this.openTaskDelegation(),
       () => this.dismissCurrentTask(),
-      () => this.openAgentSelect()
+      () => this.openAgentSelect(),
+      () => this.acceptEvolve()
     )
 
     this.taskDelegationUI = new TaskDelegationUI(this)
@@ -95,7 +97,6 @@ export class UIScene extends Phaser.Scene {
     this.game.events.on('agent-chat-response', (agentId: string, message: string) => {
       const agent = AGENTS.find(a => a.id === agentId)
       if (agent) {
-        // Reset NPC status back to idle (remove hourglass)
         const npc = this.game.scene.getScene('MainScene')?.children?.list?.find(
           (c: any) => c.agentDef?.id === agentId
         ) as any
@@ -103,8 +104,24 @@ export class UIScene extends Phaser.Scene {
           npc.statusBubble.setStatus('idle')
           npc.idleBehavior?.resume()
         }
-        // Show response in dialog panel
         this.dialogPanel.showChatResponse(agent, message)
+        this.dialogPanel.setVisible(true)
+        this.game.events.emit('dialog-opened')
+      }
+    })
+
+    // Agent evolve proposal — ask player permission
+    this.game.events.on('agent-evolve-proposal', (agentId: string, agentRole: string, prompt: string, proposal: string) => {
+      const agent = AGENTS.find(a => a.id === agentId)
+      if (agent) {
+        const npc = this.game.scene.getScene('MainScene')?.children?.list?.find(
+          (c: any) => c.agentDef?.id === agentId
+        ) as any
+        if (npc) {
+          npc.statusBubble.setStatus('idle')
+        }
+        this.pendingEvolve = { agentId, agentRole, prompt }
+        this.dialogPanel.showEvolveProposal(agent, proposal)
         this.dialogPanel.setVisible(true)
         this.game.events.emit('dialog-opened')
       }
@@ -138,6 +155,14 @@ export class UIScene extends Phaser.Scene {
     this.dialogPanel.show(agent, task)
     this.interactPrompt.setVisible(false)
     this.game.events.emit('dialog-opened')
+  }
+
+  private acceptEvolve(): void {
+    if (!this.pendingEvolve) return
+    const { agentId, agentRole, prompt } = this.pendingEvolve
+    this.pendingEvolve = null
+    this.closeDialog()
+    this.taskManager.executeEvolve(agentId, agentRole, prompt)
   }
 
   public closeDialog(): void {
