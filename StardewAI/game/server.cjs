@@ -295,21 +295,22 @@ const server = createServer((req, res) => {
 
         const escapedPath = tmpFile.replace(/\\/g, '/')
 
+        // Write evolve prompt to temp file and use $(cat) to pass it
+        const promptFile = join(os.tmpdir(), `stardew-evolve-prompt-${Date.now()}.txt`)
+        writeFileSync(promptFile, evolvePrompt, 'utf8')
+        const escapedPromptFile = promptFile.replace(/\\/g, '/')
+
         console.log(`[${agentRole}] EVOLVE EXECUTE: ${prompt.substring(0, 80)}...`)
 
-        const { execFile } = require('child_process')
-        execFile('claude', [
-          '-p', evolvePrompt,
-          '--system-prompt-file', escapedPath,
-          '--add-dir', GAME_SRC_DIR,
-          '--allowedTools', 'Read,Grep,Glob,Edit,Write',
-          '--dangerously-skip-permissions',
-        ], {
+        const cmd = `claude -p "$(cat '${escapedPromptFile}')" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}" --allowedTools "Read,Grep,Glob,Edit,Write" --dangerously-skip-permissions`
+
+        exec(cmd, {
           cwd: __dirname,
           maxBuffer: 1024 * 1024 * 5,
           timeout: 180000,
           env: { ...process.env },
         }, (err, stdout, stderr) => {
+          try { unlinkSync(promptFile) } catch (_) {}
           try { unlinkSync(tmpFile) } catch (_) {}
 
           if (err) {
