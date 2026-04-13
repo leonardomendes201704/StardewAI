@@ -177,11 +177,10 @@ const server = createServer((req, res) => {
             // Parse [CHAT], [TASK], or [EVOLVE] — search anywhere in first 200 chars
             let type = 'task'
             let result = raw
-            const head = raw.substring(0, 200)
+            const head = raw.substring(0, 300)
             if (head.includes('[EVOLVE]')) {
               type = 'evolve'
               result = raw.replace(/\[EVOLVE\]/gi, '').trim()
-              console.log(`[${agentRole}] EVOLVE — NPC wants to modify game!`)
             } else if (head.includes('[CHAT]')) {
               type = 'chat'
               result = raw.replace(/\[CHAT\]/gi, '').trim()
@@ -189,6 +188,12 @@ const server = createServer((req, res) => {
               type = 'task'
               result = raw.replace(/\[TASK\]/gi, '').trim()
             }
+            // Auto-detect evolve if response mentions editing game files
+            if (type === 'task' && /src\/|\.ts\b|world-layout|agents\.ts|config\.ts|editar.*arquivo|modificar.*codigo|permiss/i.test(result)) {
+              type = 'evolve'
+              console.log(`[${agentRole}] Auto-detected as EVOLVE (mentions game files)`)
+            }
+            console.log(`[${agentRole}] ${type.toUpperCase()} (${result.length} chars)`)
             console.log(`[${agentRole}] ${type.toUpperCase()} (${result.length} chars)`)
             res.writeHead(200, { 'Content-Type': 'application/json' })
             res.end(JSON.stringify({ result, type }))
