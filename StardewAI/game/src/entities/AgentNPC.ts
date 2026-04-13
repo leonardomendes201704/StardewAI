@@ -85,6 +85,13 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
   private oiBalloonText: Phaser.GameObjects.Text | null = null
   private playerNearby = false
 
+  // Thought bubble (shows during work)
+  private thoughtBg: Phaser.GameObjects.Rectangle | null = null
+  private thoughtText: Phaser.GameObjects.Text | null = null
+  private thoughtTimer: ReturnType<typeof setInterval> | null = null
+  private thoughtMessages: string[] = []
+  private thoughtIndex = 0
+
   constructor(scene: Phaser.Scene, def: AgentDefinition) {
     const px = def.tileX * TILE_SIZE + TILE_SIZE / 2
     const py = def.tileY * TILE_SIZE + TILE_SIZE / 2
@@ -133,6 +140,17 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
       fontSize: '8px',
       color: '#000000',
     }).setOrigin(0.5, 0.5).setVisible(false).setDepth(151)
+
+    // Thought bubble (shows NPC thinking process during work)
+    this.thoughtBg = scene.add.rectangle(px, py - 52, 200, 20, 0x1a1a2e, 0.95)
+      .setStrokeStyle(2, 0x66aaff)
+      .setVisible(false)
+      .setDepth(160)
+    this.thoughtText = scene.add.text(px, py - 52, '', {
+      fontFamily: '"Press Start 2P"',
+      fontSize: '7px',
+      color: '#aaccff',
+    }).setOrigin(0.5, 0.5).setVisible(false).setDepth(161)
   }
 
   // ========== DIRECTION ==========
@@ -161,6 +179,8 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     this.nameLabel.setPosition(this.x, this.y + TILE_SIZE / 2 + 4)
     if (this.oiBalloonBg) this.oiBalloonBg.setPosition(this.x, this.y - 38)
     if (this.oiBalloonText) this.oiBalloonText.setPosition(this.x, this.y - 38)
+    if (this.thoughtBg) this.thoughtBg.setPosition(this.x, this.y - 52)
+    if (this.thoughtText) this.thoughtText.setPosition(this.x, this.y - 52)
   }
 
   updateAttachmentsPublic(): void {
@@ -414,23 +434,122 @@ export class AgentNPC extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  // ========== THOUGHT BUBBLE ==========
+
+  startThinking(role: string): void {
+    const thinkingMessages: Record<string, string[]> = {
+      coder: [
+        'Lendo codigo...',
+        'Analisando estrutura...',
+        'Planejando mudancas...',
+        'Escrevendo codigo...',
+        'Testando logica...',
+        'Refatorando...',
+        'Otimizando...',
+        'Finalizando...',
+      ],
+      researcher: [
+        'Pesquisando...',
+        'Analisando fontes...',
+        'Comparando dados...',
+        'Organizando info...',
+        'Documentando...',
+        'Revisando...',
+        'Finalizando...',
+      ],
+      tester: [
+        'Preparando testes...',
+        'Executando suite...',
+        'Verificando output...',
+        'Analisando cobertura...',
+        'Reportando bugs...',
+        'Validando fix...',
+        'Finalizando...',
+      ],
+      designer: [
+        'Analisando layout...',
+        'Criando wireframe...',
+        'Definindo cores...',
+        'Ajustando tipografia...',
+        'Prototipando...',
+        'Revisando UX...',
+        'Finalizando...',
+      ],
+    }
+
+    this.thoughtMessages = thinkingMessages[role] || thinkingMessages.coder
+    this.thoughtIndex = 0
+
+    if (this.thoughtBg && this.thoughtText) {
+      this.thoughtBg.setVisible(true).setAlpha(0)
+      this.thoughtText.setVisible(true).setAlpha(0)
+      this.thoughtText.setText(this.thoughtMessages[0])
+      this.scene.tweens.add({
+        targets: [this.thoughtBg, this.thoughtText],
+        alpha: 1,
+        duration: 300,
+      })
+    }
+
+    // Cycle through messages
+    this.thoughtTimer = setInterval(() => {
+      this.thoughtIndex = (this.thoughtIndex + 1) % this.thoughtMessages.length
+      if (this.thoughtText) {
+        // Fade out old text, change, fade in
+        this.scene.tweens.add({
+          targets: this.thoughtText,
+          alpha: 0,
+          duration: 200,
+          onComplete: () => {
+            this.thoughtText?.setText(this.thoughtMessages[this.thoughtIndex])
+            this.scene.tweens.add({
+              targets: this.thoughtText,
+              alpha: 1,
+              duration: 200,
+            })
+          },
+        })
+      }
+    }, 2000)
+  }
+
+  stopThinking(): void {
+    if (this.thoughtTimer) {
+      clearInterval(this.thoughtTimer)
+      this.thoughtTimer = null
+    }
+    if (this.thoughtBg && this.thoughtText) {
+      this.scene.tweens.add({
+        targets: [this.thoughtBg, this.thoughtText],
+        alpha: 0,
+        duration: 300,
+        onComplete: () => {
+          this.thoughtBg?.setVisible(false)
+          this.thoughtText?.setVisible(false)
+        },
+      })
+    }
+  }
+
   // ========== STATUS ==========
 
   setAgentStatus(status: AgentStatus): void {
     this.statusBubble.setStatus(status)
 
     if (status === 'thinking') {
-      // NPC stays put, just shows hourglass — pause roaming
       this.idleBehavior?.pause()
       this.stopPathWalking()
+      this.startThinking(this.agentDef.role)
     } else if (status === 'working') {
       this.idleBehavior?.pause()
       this.hideDoneBalloon()
+      this.startThinking(this.agentDef.role)
       this.walkToDesk()
     } else if (status === 'done' || status === 'error') {
-      // Walk to player to report completion
+      this.stopThinking()
       this.scene.game.events.emit('npc-task-done-find-player', this.agentDef.id)
     } else if (status === 'idle') {
+      this.stopThinking()
       this.hideDoneBalloon()
       this.walkHome()
       window.setTimeout(() => {
