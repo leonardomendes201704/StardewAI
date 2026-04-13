@@ -126,6 +126,33 @@ export class UIScene extends Phaser.Scene {
         this.game.events.emit('dialog-opened')
       }
     })
+
+    // Check for evolve result from previous session (after reload)
+    this.checkEvolveResult()
+  }
+
+  private async checkEvolveResult(): Promise<void> {
+    try {
+      const resp = await fetch('/evolve-result.json?t=' + Date.now())
+      if (!resp.ok) return
+      const data = await resp.json()
+      if (data && data.result && (Date.now() - data.timestamp) < 30000) {
+        // Show result from NPC that evolved the game
+        const agent = AGENTS.find(a => a.id === data.agentId)
+        if (agent) {
+          // Small delay so the game is fully loaded
+          window.setTimeout(() => {
+            this.dialogPanel.showChatResponse(agent, 'EVOLUCAO APLICADA!\n\n' + data.result)
+            this.dialogPanel.setVisible(true)
+            this.game.events.emit('dialog-opened')
+          }, 1500)
+        }
+        // Clean up the file
+        fetch('/api/clear-evolve', { method: 'POST' }).catch(() => {})
+      }
+    } catch (_) {
+      // No evolve result, that's fine
+    }
   }
 
   update(time: number, delta: number): void {

@@ -8,6 +8,7 @@ const PORT = 3001
 
 // Path to game source code — NPCs can read this to understand themselves
 const GAME_SRC_DIR = join(__dirname, 'src').replace(/\\/g, '/')
+const EVOLVE_STATE_FILE = join(__dirname, 'public', 'evolve-result.json')
 
 const SELF_AWARENESS = `
 
@@ -155,6 +156,7 @@ const server = createServer((req, res) => {
         console.log(`[${agentRole}] CMD: ${cmd.substring(0, 150)}...`)
 
         exec(cmd, {
+          cwd: __dirname,
           maxBuffer: 1024 * 1024 * 5,
           timeout: 180000,
           env: { ...process.env },
@@ -286,18 +288,24 @@ const server = createServer((req, res) => {
           return
         }
 
-        const evolvePrompt = `O jogador APROVOU a modificacao. Agora EXECUTE a mudanca no codigo. Modifique os arquivos necessarios.\n\nPedido original: ${prompt}\n\nIMPORTANTE: Faca as mudancas usando Edit/Write. Depois descreva o que voce mudou comecando com [EVOLVE].`
+        const evolvePrompt = `${prompt}\n\nO jogador APROVOU esta mudanca. Voce DEVE editar o arquivo agora. Use a ferramenta Edit para modificar o codigo. Nao pergunte, apenas faca a mudanca e descreva o que fez.`
 
         const tmpFile = join(os.tmpdir(), `stardew-evolve-${agentRole}.txt`)
         writeFileSync(tmpFile, persona, 'utf8')
 
-        const escapedPrompt = evolvePrompt.replace(/"/g, '\\"')
         const escapedPath = tmpFile.replace(/\\/g, '/')
-        const cmd = `claude -p "${escapedPrompt}" --system-prompt-file "${escapedPath}" --add-dir "${GAME_SRC_DIR}" --allowedTools "Read,Grep,Glob,Edit,Write" --dangerously-skip-permissions`
 
         console.log(`[${agentRole}] EVOLVE EXECUTE: ${prompt.substring(0, 80)}...`)
 
-        exec(cmd, {
+        const { execFile } = require('child_process')
+        execFile('claude', [
+          '-p', evolvePrompt,
+          '--system-prompt-file', escapedPath,
+          '--add-dir', GAME_SRC_DIR,
+          '--allowedTools', 'Read,Grep,Glob,Edit,Write',
+          '--dangerously-skip-permissions',
+        ], {
+          cwd: __dirname,
           maxBuffer: 1024 * 1024 * 5,
           timeout: 180000,
           env: { ...process.env },
@@ -318,6 +326,19 @@ const server = createServer((req, res) => {
           else if (raw.startsWith('[CHAT]')) result = raw.substring(6).trim()
 
           console.log(`[${agentRole}] EVOLVED! (${result.length} chars)`)
+
+          // Save evolve result so game can show it after reload
+          try {
+            const { mkdirSync } = require('fs')
+            try { mkdirSync(join(__dirname, 'public'), { recursive: true }) } catch(_) {}
+            writeFileSync(EVOLVE_STATE_FILE, JSON.stringify({
+              agentId: agentRole === 'coder' ? 'coder' : agentRole === 'researcher' ? 'researcher' : agentRole === 'tester' ? 'tester' : 'designer',
+              agentName: { coder: 'Codex', researcher: 'Scholar', tester: 'Sentinel', designer: 'Pixel' }[agentRole],
+              result,
+              timestamp: Date.now(),
+            }), 'utf8')
+          } catch(_) {}
+
           res.writeHead(200, { 'Content-Type': 'application/json' })
           res.end(JSON.stringify({ result, type: 'evolve' }))
         })
@@ -327,6 +348,13 @@ const server = createServer((req, res) => {
         res.end(JSON.stringify({ error: 'Invalid JSON body' }))
       }
     })
+    return
+  }
+
+  if (req.method === 'POST' && req.url === '/api/clear-evolve') {
+    try { unlinkSync(EVOLVE_STATE_FILE) } catch(_) {}
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ ok: true }))
     return
   }
 
