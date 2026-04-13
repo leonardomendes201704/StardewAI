@@ -40,14 +40,25 @@ const CLASSIFICATION_RULE = `
 
 REGRA IMPORTANTE DE CLASSIFICACAO:
 Voce DEVE classificar cada mensagem do usuario como CONVERSA, TAREFA ou EVOLUCAO.
-- CONVERSA: perguntas casuais, cumprimentos, pedidos de explicacao, bate-papo geral.
-- TAREFA: pedidos que exigem trabalho real dentro da sua especialidade (criar codigo, testar, pesquisar, design).
-- EVOLUCAO: pedidos que exigem MODIFICAR O CODIGO DO JOGO — adicionar features, mudar comportamento de NPCs, alterar o mapa, criar novas acoes. Quando o jogador pede algo que o jogo nao suporta, voce deve EVOLUIR o jogo.
+- CONVERSA ([CHAT]): perguntas casuais, cumprimentos, pedidos de explicacao, bate-papo geral.
+- TAREFA ([TASK]): pedidos de trabalho EXTERNO ao jogo (criar codigo para outro projeto, pesquisar um tema, testar algo externo, criar um design).
+- EVOLUCAO ([EVOLVE]): QUALQUER pedido que envolva mudar ALGO NO JOGO. Isto inclui: alterar o mapa, adicionar tiles, mover coisas, criar novas acoes, mudar comportamento de NPCs, adicionar features ao jogo, ir ate algum lugar do mapa, interagir com outro NPC de forma nova. Se o jogador pede algo que voce nao consegue fazer apenas respondendo texto — e precisa mudar codigo — use [EVOLVE].
+
+EXEMPLOS DE EVOLUCAO (use [EVOLVE]):
+- "Adicione agua perto da fogueira" → [EVOLVE] (muda world-layout.ts)
+- "Va ate a casa do Codex" → [EVOLVE] (precisa criar acao de movimento)
+- "Quero que voce siga o jogador" → [EVOLVE] (precisa criar follow behavior)
+- "Mude sua cor para verde" → [EVOLVE] (muda agents.ts)
+- "Adicione um NPC novo" → [EVOLVE] (muda agents.ts + BootScene)
+
+EXEMPLOS DE TAREFA (use [TASK]):
+- "Crie uma funcao JavaScript de fibonacci" → [TASK] (codigo externo)
+- "Pesquise sobre React hooks" → [TASK]
 
 FORMATO DA RESPOSTA:
-- Se for CONVERSA, comece com [CHAT] na primeira linha.
-- Se for TAREFA, comece com [TASK] na primeira linha.
-- Se for EVOLUCAO, comece com [EVOLVE] na primeira linha. Neste caso, MODIFIQUE os arquivos necessarios usando as ferramentas Edit/Write, e descreva o que voce mudou.
+- [CHAT] para conversa
+- [TASK] para tarefa externa
+- [EVOLVE] para qualquer mudanca no jogo. NAO modifique arquivos agora — apenas DESCREVA o que voce mudaria e onde. O jogador vai aprovar antes de voce executar.
 - NUNCA omita o prefixo.`
 
 const AGENT_PERSONAS = {
@@ -163,19 +174,20 @@ const server = createServer((req, res) => {
 
           const raw = stdout.trim()
           if (raw) {
-            // Parse [CHAT], [TASK], or [EVOLVE] prefix
+            // Parse [CHAT], [TASK], or [EVOLVE] — search anywhere in first 200 chars
             let type = 'task'
             let result = raw
-            if (raw.startsWith('[CHAT]')) {
-              type = 'chat'
-              result = raw.substring(6).trim()
-            } else if (raw.startsWith('[EVOLVE]')) {
+            const head = raw.substring(0, 200)
+            if (head.includes('[EVOLVE]')) {
               type = 'evolve'
-              result = raw.substring(8).trim()
-              console.log(`[${agentRole}] EVOLVE — NPC modified game code!`)
-            } else if (raw.startsWith('[TASK]')) {
+              result = raw.replace(/\[EVOLVE\]/gi, '').trim()
+              console.log(`[${agentRole}] EVOLVE — NPC wants to modify game!`)
+            } else if (head.includes('[CHAT]')) {
+              type = 'chat'
+              result = raw.replace(/\[CHAT\]/gi, '').trim()
+            } else if (head.includes('[TASK]')) {
               type = 'task'
-              result = raw.substring(6).trim()
+              result = raw.replace(/\[TASK\]/gi, '').trim()
             }
             console.log(`[${agentRole}] ${type.toUpperCase()} (${result.length} chars)`)
             res.writeHead(200, { 'Content-Type': 'application/json' })
